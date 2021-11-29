@@ -1,0 +1,63 @@
+dist/**/*
+
+.DS_STORE
+
+# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,node
+# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,node
+
+### Node ###
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# dotenv environment variables file
+.env
+.env.test
+.env.production
+
+### Node Patch ###
+# Serverless Webpack directories
+.webpack/
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
+
+# Support for Project snippet scope
+!.vscode/*.code-snippets
+
+# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,node
