@@ -1,16 +1,13 @@
 import * as Phaser from 'phaser';
+import logo from './images/logo.png';
 
 class Scene extends Phaser.Scene {
-  constructor() {
-    super('game-scene');
-  }
-
   preload() {
-    this.load.image('sky');
+    this.load.image('logo', logo);
   }
 
   create() {
-    this.add.image(400, 300, 'sky');
+    this.add.image(200, 200, 'logo');
   }
 }
 
