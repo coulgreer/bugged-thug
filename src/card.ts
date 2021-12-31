@@ -32,6 +32,7 @@ export default class Card
     super(scene, x, y, backImage);
 
     scene.add.existing(this);
+    this.setOrigin(0, 0);
 
     this.title = title;
     this.frontImage = frontImage;
