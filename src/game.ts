@@ -7,7 +7,6 @@ import cardBackImage from './images/card-back.png';
 import Orientation from './orientation';
 
 const cardBackName = 'card-back';
-const chitChatName = 'chit-chat';
 const cardWidth = 210;
 const cardHeight = 280;
 const cardScale = 0.6;
@@ -30,26 +29,7 @@ class Scene extends Phaser.Scene {
 
       Scene.dealCards(playerCards);
       Scene.dealCards(opponentCards, cardHeight * cardScale);
-
-      this.testCard = new Card(
-        this,
-        'Test Card',
-        chitChatName,
-        0,
-        1,
-        cardBackName,
-        0,
-        cardHeight * cardScale * 2
-      );
     });
-  }
-
-  update() {
-    this.input.keyboard.on(
-      'keydown-SPACE',
-      () => this.testCard.flip(),
-      this.testCard
-    );
   }
 
   static dealCards(cards: Card[], yOffset = 0) {
@@ -69,8 +49,8 @@ class Scene extends Phaser.Scene {
 
 const config = {
   type: Phaser.AUTO,
-  width: cardWidth * 2,
-  height: cardHeight * cardScale * 2 + cardHeight,
+  width: cardWidth * cardScale * 4,
+  height: cardHeight * cardScale * 3,
   scene: [Scene],
   backgroundColor: 'E75480',
 };

@@ -33,6 +33,7 @@ export default class Card
 
     scene.add.existing(this);
     this.setOrigin(0, 0);
+    this.setInteractive();
 
     this.title = title;
     this.frontImage = frontImage;
@@ -40,6 +41,8 @@ export default class Card
     this.intelModifier = intelModifier;
     this.suspicionModifier = suspicionModifier;
     this.isFlipped = isFlipped;
+
+    this.on('pointerdown', () => this.flip());
   }
 
   flip() {
