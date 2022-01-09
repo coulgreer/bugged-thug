@@ -6,7 +6,6 @@ import OpponentCard from './opponent-card';
 
 import cardBackImage from './images/card-back.png';
 import Orientation from './orientation';
-import Displayable from './displayable';
 
 const cardBackName = 'card-back';
 const cardWidth = 210;
@@ -20,9 +19,7 @@ class Scene extends Phaser.Scene {
 
   opponentCards: OpponentCard[];
 
-  static deal(cards: PlayerCard[], yOffset?: number): void;
-  static deal(cards: OpponentCard[], yOffset?: number): void;
-  static deal(cards: (Phaser.GameObjects.Sprite & Displayable)[], yOffset = 0) {
+  static deal(cards: (OpponentCard | PlayerCard)[], yOffset = 0) {
     const padding = 3;
     let x = 0;
     const y = 0 + yOffset;
