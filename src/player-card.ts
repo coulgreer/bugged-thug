@@ -2,7 +2,7 @@ import Displayable from './displayable';
 import Modifier from './modifier';
 import Orientation from './orientation';
 
-export default class Card
+export default class PlayerCard
   extends Phaser.GameObjects.Sprite
   implements Modifier, Displayable
 {
@@ -69,7 +69,7 @@ export default class Card
 
   setOrientation(o: Orientation) {
     switch (o) {
-      case Orientation.FRONT:
+      case Orientation.FRONT: 
         this.isFlipped = true;
         this.setTexture(this.frontImage);
         break;

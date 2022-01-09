@@ -1,10 +1,12 @@
 import * as Phaser from 'phaser';
 
-import Card from './card';
 import Compendium from './compendium';
+import PlayerCard from './player-card';
+import OpponentCard from './opponent-card';
 
 import cardBackImage from './images/card-back.png';
 import Orientation from './orientation';
+import Displayable from './displayable';
 
 const cardBackName = 'card-back';
 const cardWidth = 210;
@@ -14,25 +16,13 @@ const cardScale = 0.6;
 class Scene extends Phaser.Scene {
   compendium: Compendium;
 
-  testCard: Card;
+  playerCards: PlayerCard[];
 
-  preload() {
-    this.load.image(cardBackName, cardBackImage);
-  }
+  opponentCards: OpponentCard[];
 
-  create() {
-    this.compendium = new Compendium(this);
-
-    this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-      const playerCards = this.compendium.getPlayerCards();
-      const opponentCards = this.compendium.getOpponentCards();
-
-      Scene.dealCards(playerCards);
-      Scene.dealCards(opponentCards, cardHeight * cardScale);
-    });
-  }
-
-  static dealCards(cards: Card[], yOffset = 0) {
+  static deal(cards: PlayerCard[], yOffset?: number): void;
+  static deal(cards: OpponentCard[], yOffset?: number): void;
+  static deal(cards: (Phaser.GameObjects.Sprite & Displayable)[], yOffset = 0) {
     const padding = 3;
     let x = 0;
     const y = 0 + yOffset;
@@ -44,6 +34,28 @@ class Scene extends Phaser.Scene {
 
       x = x + padding + cardWidth * cardScale;
     });
+  }
+
+  preload() {
+    this.load.image(cardBackName, cardBackImage);
+  }
+
+  create() {
+    this.compendium = new Compendium(this);
+
+    this.load.once(Phaser.Loader.Events.COMPLETE, () => {
+      this.playerCards = this.compendium.getPlayerCards();
+      this.opponentCards = this.compendium.getOpponentCards();
+
+      Scene.deal(this.playerCards);
+      Scene.deal(this.opponentCards, cardHeight * cardScale);
+    });
+  }
+
+  update() {
+    this.input.keyboard.on('keydown-SPACE', () =>
+      this.opponentCards.forEach((card) => card.flip())
+    );
   }
 }
 

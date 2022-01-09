@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 
-import Card from './card';
+import PlayerCard from './player-card';
+import OpponentCard from './opponent-card';
 
 import playerCard1Image from './images/prod.png';
 import playerCard2Image from './images/small-talk.png';
@@ -21,9 +22,9 @@ const opponentCard3Name = 'think';
 export default class Compendium {
   scene: Scene;
 
-  playerCards: Card[];
+  playerCards: PlayerCard[];
 
-  opponentCards: Card[];
+  opponentCards: OpponentCard[];
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -38,14 +39,14 @@ export default class Compendium {
 
     scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
       this.playerCards = [
-        new Card(this.scene, 'Prod', playerCard1Name, 0, 1),
-        new Card(this.scene, 'Small Talk', playerCard2Name, 0, 1),
+        new PlayerCard(this.scene, 'Prod', playerCard1Name, 0, 1),
+        new PlayerCard(this.scene, 'Small Talk', playerCard2Name, 0, 1),
       ];
 
       this.opponentCards = [
-        new Card(this.scene, 'Chit-Chat', opponentCard1Name, 0, 1),
-        new Card(this.scene, 'Suspect', opponentCard2Name, 0, 1),
-        new Card(this.scene, 'Think', opponentCard3Name, 0, 1),
+        new OpponentCard(this.scene, 'Chit-Chat', opponentCard1Name, 0, 1),
+        new OpponentCard(this.scene, 'Suspect', opponentCard2Name, 0, 1),
+        new OpponentCard(this.scene, 'Think', opponentCard3Name, 0, 1),
       ];
     });
 
