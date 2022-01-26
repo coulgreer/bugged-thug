@@ -19,6 +19,8 @@ const canvasHeight = cardHeight * cardScale * 3;
 class Scene extends Phaser.Scene {
   static xDraw = 0;
 
+  keyR: Phaser.Input.Keyboard.Key;
+
   keyS: Phaser.Input.Keyboard.Key;
 
   keyD: Phaser.Input.Keyboard.Key;
@@ -28,6 +30,8 @@ class Scene extends Phaser.Scene {
   compendium: Compendium;
 
   playerDeck: Deck;
+
+  playerHand: Card[] = [];
 
   opponentDeck: Deck;
 
@@ -53,6 +57,7 @@ class Scene extends Phaser.Scene {
       card
         .getSprite()
         .setPosition(Scene.xDraw, canvasHeight - cardHeight * cardScale);
+      this.playerHand.push(card);
     });
   }
 
@@ -61,6 +66,7 @@ class Scene extends Phaser.Scene {
   }
 
   create() {
+    this.keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.keySpace = this.input.keyboard.addKey(
@@ -75,7 +81,7 @@ class Scene extends Phaser.Scene {
 
       this.opponentDeck = this.createOpponentDeck();
       this.opponentDeck.setScale(cardScale);
-      Scene.deal(this.opponentDeck.cards);
+      Scene.deal(this.opponentDeck.cardPile);
     });
 
     this.load.start();
@@ -83,12 +89,17 @@ class Scene extends Phaser.Scene {
 
   update() {
     if (Phaser.Input.Keyboard.JustDown(this.keySpace)) {
-      this.opponentDeck.cards.forEach((card) => card.flip());
+      this.opponentDeck.cardPile.forEach((card) => card.flip());
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.keyD)) this.draw();
 
     if (Phaser.Input.Keyboard.JustDown(this.keyS)) this.playerDeck.shuffle();
+
+    if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
+      this.playerDeck.combine(this.playerHand, Orientation.TOP);
+      Scene.xDraw = 0;
+    }
   }
 
   private createPlayerDeck() {

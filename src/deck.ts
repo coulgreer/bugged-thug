@@ -9,23 +9,23 @@ export default class Deck {
 
   cardEntries: CardEntry[];
 
-  cards: Card[];
+  cardPile: Card[];
 
   constructor(cardEntries: CardEntry[], xPos: number, yPos: number) {
     this.cardEntries = cardEntries;
-    this.cards = [];
+    this.cardPile = [];
     this.xPos = xPos;
     this.yPos = yPos;
 
     cardEntries.forEach((entry) => {
       entry.getCards().forEach((card) => {
-        this.cards.push(card);
+        this.cardPile.push(card);
       });
     });
 
-    this.cards.forEach((card, i) => {
+    this.cardPile.forEach((card, i) => {
       const sprite = card.getSprite();
-      sprite.setDepth(this.cards.length - i);
+      sprite.setDepth(this.cardPile.length - i);
       sprite.setPosition(xPos, yPos);
     });
   }
@@ -34,7 +34,7 @@ export default class Deck {
     if (Array.isArray(c)) {
       c.forEach((card) => this.combine(card, position));
     } else {
-      this.addCard(c, position);
+      this.addCardToPile(c, position);
       this.normalizeDepth(c, position);
     }
   }
@@ -42,10 +42,10 @@ export default class Deck {
   draw(amount = 1) {
     const drawnCards: Card[] = [];
 
-    if (this.cards.length < 1) return drawnCards;
+    if (this.cardPile.length < 1) return drawnCards;
 
     for (let x = 0; x < amount; x += 1) {
-      drawnCards.push(this.cards.shift());
+      drawnCards.push(this.cardPile.shift());
     }
 
     drawnCards.forEach((card) => {
@@ -57,36 +57,43 @@ export default class Deck {
   }
 
   shuffle() {
-    for (let x = this.cards.length - 1; x > 0; x -= 1) {
+    for (let x = this.cardPile.length - 1; x > 0; x -= 1) {
       const y = Math.floor(Math.random() * (x + 1));
-      [this.cards[x], this.cards[y]] = [this.cards[y], this.cards[x]];
+      [this.cardPile[x], this.cardPile[y]] = [this.cardPile[y], this.cardPile[x]];
     }
     this.normalize();
   }
 
   setScale(value: number) {
-    this.cards.forEach((card) => card.getSprite().setScale(value));
+    this.cardPile.forEach((card) => card.getSprite().setScale(value));
   }
 
-  private addCard(card: Card, position: Orientation.TOP | Orientation.BOTTOM) {
+  private addCardToPile(
+    card: Card,
+    position: Orientation.TOP | Orientation.BOTTOM
+  ) {
+    switch (position) {
+      case Orientation.TOP: {
+        this.cardPile = [card, ...this.cardPile];
+        break;
+      }
+      case Orientation.BOTTOM: {
+        this.cardPile = [...this.cardPile, card];
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  private addCardToDeck(card: Card) {
     let entry: CardEntry;
     if (this.hasEntry(card)) {
       const target = this.findEntry(card);
       target.increaseCount();
     } else {
       entry = new CardEntry(card, 1);
-      switch (position) {
-        case Orientation.TOP: {
-          this.cardEntries = [entry, ...this.cardEntries];
-          break;
-        }
-        case Orientation.BOTTOM: {
-          this.cardEntries = [...this.cardEntries, entry];
-          break;
-        }
-        default:
-          break;
-      }
+      this.cardEntries.push(entry);
     }
   }
 
@@ -98,13 +105,13 @@ export default class Deck {
       case Orientation.TOP: {
         const sprite = card.getSprite();
         this.normalize();
-        sprite.setDepth(this.cards.length + 1);
+        sprite.setDepth(this.cardPile.length + 1);
         sprite.setPosition(this.xPos, this.yPos);
         break;
       }
       case Orientation.BOTTOM: {
         const sprite = card.getSprite();
-        this.normalize(this.cards.length + 1);
+        this.normalize(this.cardPile.length + 1);
         sprite.setDepth(0);
         sprite.setPosition(this.xPos, this.yPos);
         break;
@@ -114,8 +121,8 @@ export default class Deck {
     }
   }
 
-  private normalize(startingIndex = this.cards.length) {
-    this.cards.forEach((card, i) => {
+  private normalize(startingIndex = this.cardPile.length) {
+    this.cardPile.forEach((card, i) => {
       card.getSprite().setDepth(startingIndex - i);
     });
   }
