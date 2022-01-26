@@ -72,6 +72,10 @@ export default class OpponentCard
     }
   }
 
+  getSprite() {
+    return this;
+  }
+
   modifyIntel(intel: number) {
     return intel + this.intelModifier;
   }

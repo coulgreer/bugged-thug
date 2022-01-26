@@ -73,6 +73,10 @@ export default class PlayerCard
     }
   }
 
+  getSprite() {
+    return this;
+  }
+
   modifyIntel(intel: number) {
     return intel + this.intelModifier;
   }

@@ -6,5 +6,6 @@ export default interface Card extends Modifier, Displayable {
   getId(): string;
   flip(): void;
   setOrientation(o: Orientation): void;
+  getSprite(): Phaser.GameObjects.Sprite;
   clone(): Card;
 }
