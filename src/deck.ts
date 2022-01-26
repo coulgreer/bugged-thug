@@ -48,7 +48,10 @@ export default class Deck {
       drawnCards.push(this.cards.shift());
     }
 
-    drawnCards.forEach((card) => card.getSprite().setInteractive(false));
+    drawnCards.forEach((card) => {
+      const sprite = card.getSprite();
+      sprite.input.enabled = false;
+    });
 
     return drawnCards;
   }
