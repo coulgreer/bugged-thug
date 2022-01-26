@@ -1,3 +1,5 @@
+import { nanoid } from 'nanoid';
+
 import Card from './card';
 import Orientation from './orientation';
 
@@ -5,6 +7,8 @@ export default class PlayerCard
   extends Phaser.GameObjects.Sprite
   implements Card
 {
+  private id;
+
   private title;
 
   private frontImage;
@@ -33,15 +37,15 @@ export default class PlayerCard
     scene.add.existing(this);
     this.setOrigin(0, 0);
     this.setInteractive();
+    this.on('pointerdown', () => this.flip());
 
+    this.id = nanoid();
     this.title = title;
     this.frontImage = frontImage;
     this.backImage = backImage;
     this.intelModifier = intelModifier;
     this.suspicionModifier = suspicionModifier;
     this.isFlipped = isFlipped;
-
-    this.on('pointerdown', () => this.flip());
   }
 
   flip() {
@@ -51,6 +55,21 @@ export default class PlayerCard
       this.setTexture(this.frontImage);
     } else {
       this.setTexture(this.backImage);
+    }
+  }
+
+  setOrientation(o: Orientation) {
+    switch (o) {
+      case Orientation.FRONT:
+        this.isFlipped = true;
+        this.setTexture(this.frontImage);
+        break;
+      case Orientation.BACK:
+        this.isFlipped = false;
+        this.setTexture(this.backImage);
+        break;
+      default:
+        break;
     }
   }
 
@@ -70,19 +89,8 @@ export default class PlayerCard
     return `${this.title}: This is a placeholder for the cards description.`;
   }
 
-  setOrientation(o: Orientation) {
-    switch (o) {
-      case Orientation.FRONT:
-        this.isFlipped = true;
-        this.setTexture(this.frontImage);
-        break;
-      case Orientation.BACK:
-        this.isFlipped = false;
-        this.setTexture(this.backImage);
-        break;
-      default:
-        break;
-    }
+  getId() {
+    return `CP${this.id}`;
   }
 
   // eslint-disable-next-line class-methods-use-this
