@@ -23,8 +23,10 @@ export default class Deck {
       });
     });
 
-    this.cards.forEach((card) => {
-      card.getSprite().setPosition(xPos, yPos);
+    this.cards.forEach((card, i) => {
+      const sprite = card.getSprite();
+      sprite.setDepth(this.cards.length - i);
+      sprite.setPosition(xPos, yPos);
     });
   }
 
@@ -43,7 +45,7 @@ export default class Deck {
     if (this.cards.length < 1) return drawnCards;
 
     for (let x = 0; x < amount; x += 1) {
-      drawnCards.push(this.cards.pop());
+      drawnCards.push(this.cards.shift());
     }
 
     drawnCards.forEach((card) => card.getSprite().setInteractive(false));
@@ -92,15 +94,15 @@ export default class Deck {
     switch (position) {
       case Orientation.TOP: {
         const sprite = card.getSprite();
-        this.normalize(-1);
-        sprite.setDepth(0);
+        this.normalize();
+        sprite.setDepth(this.cards.length + 1);
         sprite.setPosition(this.xPos, this.yPos);
         break;
       }
       case Orientation.BOTTOM: {
         const sprite = card.getSprite();
-        this.normalize();
-        sprite.setDepth(-1 * (this.cardEntries.length - 1));
+        this.normalize(this.cards.length + 1);
+        sprite.setDepth(0);
         sprite.setPosition(this.xPos, this.yPos);
         break;
       }
@@ -109,12 +111,9 @@ export default class Deck {
     }
   }
 
-  private normalize(startingIndex = 0) {
-    let z = startingIndex;
-    this.cards.forEach((card) => {
-      const sprite = card.getSprite();
-      sprite.setDepth(z);
-      z -= 1;
+  private normalize(startingIndex = this.cards.length) {
+    this.cards.forEach((card, i) => {
+      card.getSprite().setDepth(startingIndex - i);
     });
   }
 
