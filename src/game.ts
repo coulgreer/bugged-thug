@@ -13,7 +13,7 @@ const cardWidth = 210;
 const cardHeight = 280;
 const cardScale = 0.6;
 
-const canvasWidth = cardWidth * cardScale * 4;
+const canvasWidth = cardWidth * cardScale * 10;
 const canvasHeight = cardHeight * cardScale * 3;
 
 class Scene extends Phaser.Scene {
