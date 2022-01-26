@@ -8,6 +8,9 @@ export default class CardEntry {
   cards: Card[];
 
   constructor(card: Card, count: number) {
+    if (card === undefined || card === null)
+      throw new Error('The Card object cannot be nullish');
+
     if (count < 1)
       throw new Error('A card entry should have at least 1 card count');
 
@@ -15,14 +18,15 @@ export default class CardEntry {
     this.count = count;
     this.cards = [];
 
-    for (let x = 0; x < count; x += 1) {
-      this.cards.push({ ...this.card });
+    this.cards.push(this.card);
+    for (let x = 0; x < count - 1; x += 1) {
+      this.cards.push(this.card.clone());
     }
   }
 
   increaseCount(amount = 1) {
     for (let x = 0; x < amount; x += 1) {
-      this.cards.push({ ...this.card });
+      this.cards.push(this.card.clone());
     }
   }
 
@@ -30,5 +34,9 @@ export default class CardEntry {
     for (let x = 0; x < amount; x += 1) {
       this.cards.pop();
     }
+  }
+
+  getCards() {
+    return Array.from(this.cards);
   }
 }

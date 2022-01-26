@@ -5,4 +5,5 @@ import Orientation from './orientation';
 export default interface Card extends Modifier, Displayable {
   flip(): void;
   setOrientation(o: Orientation): void;
+  clone(): Card;
 }

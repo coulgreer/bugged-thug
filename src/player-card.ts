@@ -84,4 +84,19 @@ export default class PlayerCard
         break;
     }
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  clone() {
+    return new PlayerCard(
+      this.scene,
+      this.title,
+      this.frontImage,
+      this.intelModifier,
+      this.suspicionModifier,
+      this.backImage,
+      this.x,
+      this.y,
+      this.isFlipped
+    );
+  }
 }
