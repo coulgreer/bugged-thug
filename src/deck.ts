@@ -34,6 +34,7 @@ export default class Deck {
     if (Array.isArray(c)) {
       c.forEach((card) => this.combine(card, position));
     } else {
+      c.getSprite().setInteractive();
       this.addCardToPile(c, position);
       this.normalizeDepth(c, position);
     }
