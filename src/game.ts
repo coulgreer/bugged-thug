@@ -98,6 +98,7 @@ class Scene extends Phaser.Scene {
 
     if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
       this.playerDeck.combine(this.playerHand, Orientation.TOP);
+      this.playerHand = [];
       Scene.xDraw = 0;
     }
   }

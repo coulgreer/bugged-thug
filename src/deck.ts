@@ -60,7 +60,10 @@ export default class Deck {
   shuffle() {
     for (let x = this.cardPile.length - 1; x > 0; x -= 1) {
       const y = Math.floor(Math.random() * (x + 1));
-      [this.cardPile[x], this.cardPile[y]] = [this.cardPile[y], this.cardPile[x]];
+      [this.cardPile[x], this.cardPile[y]] = [
+        this.cardPile[y],
+        this.cardPile[x],
+      ];
     }
     this.normalize();
   }
