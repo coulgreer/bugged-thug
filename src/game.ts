@@ -1,7 +1,11 @@
 import * as Phaser from 'phaser';
 
 import Compendium from './compendium';
-import Card from './card';
+import Card, {
+  WIDTH as CARD_WIDTH,
+  HEIGHT as CARD_HEIGHT,
+  SCALE as CARD_SCALE,
+} from './card';
 
 import cardBackImage from './images/card-back.png';
 import Orientation from './orientation';
@@ -9,15 +13,12 @@ import Deck from './deck';
 import CardEntry from './card-entry';
 
 const cardBackName = 'card-back';
-const cardWidth = 210;
-const cardHeight = 280;
-const cardScale = 0.6;
 
-const canvasWidth = cardWidth * cardScale * 10;
-const canvasHeight = cardHeight * cardScale * 3;
+const canvasWidth = CARD_WIDTH * CARD_SCALE * 10;
+const canvasHeight = CARD_HEIGHT * CARD_SCALE * 3;
 
 class Scene extends Phaser.Scene {
-  static xDraw = 0;
+  static xDraw = (CARD_WIDTH * CARD_SCALE) / 2;
 
   keyR: Phaser.Input.Keyboard.Key;
 
@@ -35,15 +36,15 @@ class Scene extends Phaser.Scene {
 
   opponentDeck: Deck;
 
-  static deal(cards: Card[], y = 0) {
+  static deal(cards: Card[], y = (CARD_HEIGHT * CARD_SCALE) / 2) {
     const padding = 3;
-    let x = 0;
+    let x = (CARD_WIDTH * CARD_SCALE) / 2;
 
     cards.forEach((card) => {
       card.setOrientation(Orientation.FRONT);
-      card.getSprite().setPosition(x, y);
+      card.getContainer().setPosition(x, y);
 
-      x = x + padding + cardWidth * cardScale;
+      x = x + padding + CARD_WIDTH * CARD_SCALE;
     });
   }
 
@@ -52,11 +53,14 @@ class Scene extends Phaser.Scene {
     const cards = this.playerDeck.draw();
 
     cards.forEach((card) => {
-      Scene.xDraw += cardWidth * cardScale + padding;
+      Scene.xDraw += CARD_WIDTH * CARD_SCALE + padding;
       card.setOrientation(Orientation.FRONT);
       card
-        .getSprite()
-        .setPosition(Scene.xDraw, canvasHeight - cardHeight * cardScale);
+        .getContainer()
+        .setPosition(
+          Scene.xDraw,
+          canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2
+        );
       this.playerHand.push(card);
     });
   }
@@ -77,10 +81,10 @@ class Scene extends Phaser.Scene {
 
     this.load.once(Phaser.Loader.Events.COMPLETE, () => {
       this.playerDeck = this.createPlayerDeck();
-      this.playerDeck.setScale(cardScale);
+      this.playerDeck.setScale(CARD_SCALE);
 
       this.opponentDeck = this.createOpponentDeck();
-      this.opponentDeck.setScale(cardScale);
+      this.opponentDeck.setScale(CARD_SCALE);
       Scene.deal(this.opponentDeck.cardPile);
     });
 
@@ -99,7 +103,7 @@ class Scene extends Phaser.Scene {
     if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
       this.playerDeck.combine(this.playerHand, Orientation.TOP);
       this.playerHand = [];
-      Scene.xDraw = 0;
+      Scene.xDraw = (CARD_WIDTH * CARD_SCALE) / 2;
     }
   }
 
@@ -108,7 +112,11 @@ class Scene extends Phaser.Scene {
       .getPlayerCards()
       .map((card) => new CardEntry(card, 3));
 
-    return new Deck(entries, 0, canvasHeight - cardHeight * cardScale);
+    return new Deck(
+      entries,
+      (CARD_WIDTH * CARD_SCALE) / 2,
+      canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2
+    );
   }
 
   private createOpponentDeck() {

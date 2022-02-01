@@ -24,9 +24,9 @@ export default class Deck {
     });
 
     this.cardPile.forEach((card, i) => {
-      const sprite = card.getSprite();
-      sprite.setDepth(this.cardPile.length - i);
-      sprite.setPosition(xPos, yPos);
+      const container = card.getContainer();
+      container.setDepth(this.cardPile.length - i);
+      container.setPosition(xPos, yPos);
     });
   }
 
@@ -34,7 +34,8 @@ export default class Deck {
     if (Array.isArray(c)) {
       c.forEach((card) => this.combine(card, position));
     } else {
-      c.getSprite().setInteractive();
+      const container = c.getContainer();
+      container.setInteractive();
       this.addCardToPile(c, position);
       this.normalizeDepth(c, position);
     }
@@ -50,7 +51,7 @@ export default class Deck {
     }
 
     drawnCards.forEach((card) => {
-      const sprite = card.getSprite();
+      const sprite = card.getContainer();
       sprite.input.enabled = false;
     });
 
@@ -69,7 +70,7 @@ export default class Deck {
   }
 
   setScale(value: number) {
-    this.cardPile.forEach((card) => card.getSprite().setScale(value));
+    this.cardPile.forEach((card) => card.getContainer().setScale(value));
   }
 
   private addCardToPile(
@@ -107,14 +108,14 @@ export default class Deck {
   ) {
     switch (position) {
       case Orientation.TOP: {
-        const sprite = card.getSprite();
+        const sprite = card.getContainer();
         this.normalize();
         sprite.setDepth(this.cardPile.length + 1);
         sprite.setPosition(this.xPos, this.yPos);
         break;
       }
       case Orientation.BOTTOM: {
-        const sprite = card.getSprite();
+        const sprite = card.getContainer();
         this.normalize(this.cardPile.length + 1);
         sprite.setDepth(0);
         sprite.setPosition(this.xPos, this.yPos);
@@ -127,7 +128,7 @@ export default class Deck {
 
   private normalize(startingIndex = this.cardPile.length) {
     this.cardPile.forEach((card, i) => {
-      card.getSprite().setDepth(startingIndex - i);
+      card.getContainer().setDepth(startingIndex - i);
     });
   }
 

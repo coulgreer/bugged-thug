@@ -1,60 +1,112 @@
 import { nanoid } from 'nanoid';
 
-import Card from './card';
+import Card, { WIDTH as CARD_WIDTH, HEIGHT as CARD_HEIGHT } from './card';
 import Orientation from './orientation';
 
 export default class PlayerCard
-  extends Phaser.GameObjects.Sprite
+  extends Phaser.GameObjects.Container
   implements Card
 {
   private id;
 
+  private backStyle;
+
   private title;
 
-  private frontImage;
+  private effect;
 
-  private backImage;
+  private image;
 
   private intelModifier;
 
   private suspicionModifier;
+
+  private front: Phaser.GameObjects.Container;
+
+  private back: Phaser.GameObjects.Sprite;
 
   private isFlipped;
 
   constructor(
     scene: Phaser.Scene,
     title: string,
-    frontImage: string,
+    effect: string,
+    image: string,
     intelModifier: number,
     suspicionModifier: number,
-    backImage = 'card-back',
+    backStyle = 'card-back',
     x = 0,
     y = 0,
     isFlipped = false
   ) {
-    super(scene, x, y, backImage);
-
-    scene.add.existing(this);
-    this.setOrigin(0, 0);
-    this.setInteractive();
-    this.on('pointerdown', () => this.flip());
+    super(scene, x, y);
 
     this.id = nanoid();
     this.title = title;
-    this.frontImage = frontImage;
-    this.backImage = backImage;
+    this.effect = effect;
+    this.image = image;
+    this.backStyle = backStyle;
     this.intelModifier = intelModifier;
     this.suspicionModifier = suspicionModifier;
     this.isFlipped = isFlipped;
+
+    this.setSize(210, 280);
+    this.setInteractive();
+    this.on('pointerdown', () => this.flip());
+    scene.add.existing(this);
+
+    this.renderBack(scene, x, y, backStyle);
+    this.renderFront(scene, x, y, title, effect, image);
+
+    this.add([this.back, this.front]);
+    this.bringToTop(this.back);
+  }
+
+  private renderBack(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    backStyle: string
+  ) {
+    this.back = scene.add.sprite(x, y, backStyle);
+  }
+
+  private renderFront(
+    scene: Phaser.Scene,
+    xContainer: number,
+    yContainer: number,
+    title: string,
+    effect: string,
+    image: string
+  ) {
+    const xChild = CARD_WIDTH / 2;
+    const yChild = CARD_HEIGHT / 4;
+    const frame = scene.add.sprite(0, 0, 'player-frame');
+
+    const name = scene.add.text(-xChild + 10, 10, title);
+    name.setColor('black');
+
+    const text = scene.add.text(-xChild + 10, 30, effect);
+    text.setColor('black');
+    text.setWordWrapWidth(190);
+
+    const imageSprite = scene.add.sprite(0, -yChild + 10, image);
+
+    this.front = scene.add.container(xContainer, yContainer, [
+      frame,
+      imageSprite,
+      name,
+      text,
+    ]);
   }
 
   flip() {
     this.isFlipped = !this.isFlipped;
 
     if (this.isFlipped) {
-      this.setTexture(this.frontImage);
+      this.bringToTop(this.front);
     } else {
-      this.setTexture(this.backImage);
+      this.bringToTop(this.back);
     }
   }
 
@@ -62,18 +114,18 @@ export default class PlayerCard
     switch (o) {
       case Orientation.FRONT:
         this.isFlipped = true;
-        this.setTexture(this.frontImage);
+        this.bringToTop(this.front);
         break;
       case Orientation.BACK:
         this.isFlipped = false;
-        this.setTexture(this.backImage);
+        this.bringToTop(this.back);
         break;
       default:
         break;
     }
   }
 
-  getSprite() {
+  getContainer() {
     return this;
   }
 
@@ -102,10 +154,11 @@ export default class PlayerCard
     return new PlayerCard(
       this.scene,
       this.title,
-      this.frontImage,
+      this.effect,
+      this.image,
       this.intelModifier,
       this.suspicionModifier,
-      this.backImage,
+      this.backStyle,
       this.x,
       this.y,
       this.isFlipped
