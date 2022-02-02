@@ -78,14 +78,20 @@ export default class OpponentCard
   ) {
     const xChild = CARD_WIDTH / 2;
     const yChild = CARD_HEIGHT / 4;
+    const padding = 10;
     const frame = scene.add.sprite(0, 0, 'opponent-frame');
 
-    const name = scene.add.text(-xChild + 10, 10, title);
+    const name = scene.add.text(-xChild, 0, title);
+    name.setWordWrapWidth(CARD_WIDTH - padding * 2);
+    name.setPadding(padding);
+    const nameHeight =
+      name.lineSpacing === 0 ? name.height - padding : name.lineSpacing;
 
-    const text = scene.add.text(-xChild + 10, 30, effect);
-    text.setWordWrapWidth(190);
+    const text = scene.add.text(-xChild, nameHeight, effect);
+    text.setWordWrapWidth(CARD_WIDTH - padding * 2);
+    text.setPadding(padding);
 
-    const imageSprite = scene.add.sprite(0, -yChild + 10, image);
+    const imageSprite = scene.add.sprite(0, -yChild, image);
 
     this.front = scene.add.container(xContainer, yContainer, [
       frame,

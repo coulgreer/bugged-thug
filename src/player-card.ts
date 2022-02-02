@@ -50,7 +50,7 @@ export default class PlayerCard
     this.suspicionModifier = suspicionModifier;
     this.isFlipped = isFlipped;
 
-    this.setSize(210, 280);
+    this.setSize(CARD_WIDTH, CARD_WIDTH);
     this.setInteractive();
     this.on('pointerdown', () => this.flip());
     scene.add.existing(this);
@@ -81,16 +81,22 @@ export default class PlayerCard
   ) {
     const xChild = CARD_WIDTH / 2;
     const yChild = CARD_HEIGHT / 4;
+    const padding = 10;
     const frame = scene.add.sprite(0, 0, 'player-frame');
 
-    const name = scene.add.text(-xChild + 10, 10, title);
+    const name = scene.add.text(-xChild + padding, 0, title);
     name.setColor('black');
+    name.setWordWrapWidth(CARD_WIDTH - padding * 2);
+    name.setPadding(padding);
+    const nameHeight =
+      name.lineSpacing === 0 ? name.height - padding : name.lineSpacing;
 
-    const text = scene.add.text(-xChild + 10, 30, effect);
+    const text = scene.add.text(-xChild + padding, nameHeight, effect);
     text.setColor('black');
-    text.setWordWrapWidth(190);
+    text.setWordWrapWidth(CARD_WIDTH - padding * 2);
+    text.setPadding(padding);
 
-    const imageSprite = scene.add.sprite(0, -yChild + 10, image);
+    const imageSprite = scene.add.sprite(0, -yChild + padding, image);
 
     this.front = scene.add.container(xContainer, yContainer, [
       frame,
