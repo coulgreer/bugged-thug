@@ -56,7 +56,7 @@ export default class Compendium {
         new PlayerCard(
           this.scene,
           'Small Talk',
-          'Effect',
+          'Gain 0-1 intel.',
           playerCard2Name,
           0,
           1
