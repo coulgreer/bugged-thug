@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid';
 
 import Card, { WIDTH as CARD_WIDTH, HEIGHT as CARD_HEIGHT } from './card';
+import CardDisplayManager from './card-display-manager';
+import ModifierCalculator from './modifier-calculator';
 import Orientation from './orientation';
 
 export default class OpponentCard
@@ -25,7 +27,9 @@ export default class OpponentCard
 
   private back: Phaser.GameObjects.Sprite;
 
-  private isFlipped;
+  private displayManager;
+
+  private calculator;
 
   constructor(
     scene: Phaser.Scene,
@@ -48,15 +52,19 @@ export default class OpponentCard
     this.backStyle = backStyle;
     this.intelModifier = intelModifier;
     this.suspicionModifier = suspicionModifier;
-    this.isFlipped = isFlipped;
+    this.calculator = new ModifierCalculator(intelModifier, suspicionModifier);
 
     scene.add.existing(this);
 
     this.renderBack(scene, x, y, backStyle);
     this.renderFront(scene, x, y, title, effect, image);
-
     this.add([this.back, this.front]);
-    this.bringToTop(this.back);
+    this.displayManager = new CardDisplayManager(
+      this,
+      this.front,
+      this.back,
+      isFlipped
+    );
   }
 
   private renderBack(
@@ -102,28 +110,11 @@ export default class OpponentCard
   }
 
   flip() {
-    this.isFlipped = !this.isFlipped;
-
-    if (this.isFlipped) {
-      this.bringToTop(this.front);
-    } else {
-      this.bringToTop(this.back);
-    }
+    this.displayManager.flip();
   }
 
   setOrientation(o: Orientation) {
-    switch (o) {
-      case Orientation.FRONT:
-        this.isFlipped = true;
-        this.bringToTop(this.front);
-        break;
-      case Orientation.BACK:
-        this.isFlipped = false;
-        this.bringToTop(this.back);
-        break;
-      default:
-        break;
-    }
+    this.displayManager.setOrientation(o);
   }
 
   getContainer() {
@@ -131,33 +122,11 @@ export default class OpponentCard
   }
 
   modifyIntel(intel: number) {
-    if (Array.isArray(this.intelModifier)) {
-      const min = Math.min(this.intelModifier[0], this.intelModifier[1]);
-      const max = Math.max(this.intelModifier[0], this.intelModifier[1]);
-      const value = Math.floor(Math.random() * (max - min + 1) + min);
-
-      return intel + value;
-    }
-
-    return intel + this.intelModifier;
+    return this.calculator.modifyIntel(intel);
   }
 
   modifySuspicion(suspicion: number) {
-    if (Array.isArray(this.suspicionModifier)) {
-      const min = Math.min(
-        this.suspicionModifier[0],
-        this.suspicionModifier[1]
-      );
-      const max = Math.max(
-        this.suspicionModifier[0],
-        this.suspicionModifier[1]
-      );
-      const value = Math.floor(Math.random() * (max - min + 1) + min);
-
-      return suspicion + value;
-    }
-
-    return suspicion + this.suspicionModifier;
+    return this.calculator.modifySuspicion(suspicion);
   }
 
   getTitle() {
@@ -183,8 +152,7 @@ export default class OpponentCard
       this.suspicionModifier,
       this.backStyle,
       this.x,
-      this.y,
-      this.isFlipped
+      this.y
     );
   }
 }
