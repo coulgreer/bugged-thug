@@ -28,13 +28,13 @@ class Scene extends Phaser.Scene {
 
   keySpace: Phaser.Input.Keyboard.Key;
 
-  intel: number;
+  intelScore: number;
 
-  intelScore: Phaser.GameObjects.Text;
+  intelText: Phaser.GameObjects.Text;
 
-  suspicion: number;
+  suspicionScore: number;
 
-  suspicionScore: Phaser.GameObjects.Text;
+  suspicionText: Phaser.GameObjects.Text;
 
   compendium: Compendium;
 
@@ -75,9 +75,6 @@ class Scene extends Phaser.Scene {
 
   preload() {
     this.load.image(cardBackName, cardBackImage);
-
-    this.intel = 0;
-    this.suspicion = 0;
   }
 
   create() {
@@ -89,6 +86,7 @@ class Scene extends Phaser.Scene {
     );
 
     this.compendium = new Compendium(this);
+    this.renderScore();
 
     this.load.once(Phaser.Loader.Events.COMPLETE, () => {
       this.playerDeck = this.createPlayerDeck();
@@ -103,10 +101,8 @@ class Scene extends Phaser.Scene {
   }
 
   update() {
-    let y = CARD_HEIGHT * CARD_SCALE * 1.5;
-    this.intelScore = this.add.text(10, y, `Intel: ${this.intel}`);
-    y += this.intelScore.height;
-    this.suspicionScore = this.add.text(10, y, `Suspicion: ${this.suspicion}`);
+    this.intelText.setText(`Intel: ${this.intelScore}`);
+    this.suspicionText.setText(`Suspicion: ${this.suspicionScore}`);
 
     if (Phaser.Input.Keyboard.JustDown(this.keySpace)) {
       this.opponentDeck.cardPile.forEach((card) => card.flip());
@@ -121,6 +117,21 @@ class Scene extends Phaser.Scene {
       this.playerHand = [];
       Scene.xDraw = (CARD_WIDTH * CARD_SCALE) / 2;
     }
+  }
+
+  private renderScore() {
+    const padding = 10;
+    let y = CARD_HEIGHT * CARD_SCALE * 1.5;
+    this.intelScore = 0;
+    this.suspicionScore = 0;
+
+    this.intelText = this.add.text(0, y, `Intel: ${this.intelScore}`);
+    this.intelText.setPadding(padding);
+
+    y += this.intelText.height - padding * 2;
+
+    this.suspicionText = this.add.text(0, y, `Suspicion: ${this.suspicionScore}`);
+    this.suspicionText.setPadding(padding);
   }
 
   private createPlayerDeck() {
