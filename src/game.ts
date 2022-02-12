@@ -28,6 +28,14 @@ class Scene extends Phaser.Scene {
 
   keySpace: Phaser.Input.Keyboard.Key;
 
+  intel: number;
+
+  intelScore: Phaser.GameObjects.Text;
+
+  suspicion: number;
+
+  suspicionScore: Phaser.GameObjects.Text;
+
   compendium: Compendium;
 
   playerDeck: Deck;
@@ -67,6 +75,9 @@ class Scene extends Phaser.Scene {
 
   preload() {
     this.load.image(cardBackName, cardBackImage);
+
+    this.intel = 0;
+    this.suspicion = 0;
   }
 
   create() {
@@ -92,6 +103,11 @@ class Scene extends Phaser.Scene {
   }
 
   update() {
+    let y = CARD_HEIGHT * CARD_SCALE * 1.5;
+    this.intelScore = this.add.text(10, y, `Intel: ${this.intel}`);
+    y += this.intelScore.height;
+    this.suspicionScore = this.add.text(10, y, `Suspicion: ${this.suspicion}`);
+
     if (Phaser.Input.Keyboard.JustDown(this.keySpace)) {
       this.opponentDeck.cardPile.forEach((card) => card.flip());
     }
