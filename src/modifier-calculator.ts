@@ -1,16 +1,38 @@
+import Keyword from './keyword';
 import Modifier from './modifier';
+import { MODIFIER_INDEX, QUANTIFIER_INDEX, SUBJECT_INDEX } from './parser';
 
 export default class ModifierCalculator implements Modifier {
   intelModifier: number | [number, number];
 
   suspicionModifier: number | [number, number];
 
-  constructor(
-    intelModifier: number | [number, number],
-    suspicionModifier: number | [number, number]
-  ) {
-    this.intelModifier = intelModifier;
-    this.suspicionModifier = suspicionModifier;
+  constructor(instruction: [Keyword, string, Keyword]) {
+    let magnitude;
+    switch (instruction[MODIFIER_INDEX]) {
+      case Keyword.GAIN:
+        magnitude = 1;
+        break;
+      case Keyword.LOSE:
+        magnitude = -1;
+        break;
+      default:
+        throw new Error();
+    }
+
+    const matches = instruction[QUANTIFIER_INDEX].match(/\d+-\d+/);
+    const hasRange = matches.length > 0;
+    const modifier: number | [number, number] = hasRange
+      ? [
+          magnitude * Number.parseInt(matches[0], 10),
+          magnitude * Number.parseInt(matches[1], 10),
+        ]
+      : magnitude * Number.parseInt(instruction[QUANTIFIER_INDEX], 10);
+
+    const subject = instruction[SUBJECT_INDEX];
+
+    this.intelModifier = subject === Keyword.GAIN ? modifier : 0;
+    this.suspicionModifier = subject === Keyword.SUSPICION ? modifier : 0;
   }
 
   modifyIntel(intel: number) {

@@ -4,6 +4,7 @@ import Card, { WIDTH as CARD_WIDTH, HEIGHT as CARD_HEIGHT } from './card';
 import CardDisplayManager from './card-display-manager';
 import ModifierCalculator from './modifier-calculator';
 import Orientation from './orientation';
+import Parser from './parser';
 
 export default class PlayerCard
   extends Phaser.GameObjects.Container
@@ -19,10 +20,6 @@ export default class PlayerCard
 
   private image;
 
-  private intelModifier;
-
-  private suspicionModifier;
-
   private front: Phaser.GameObjects.Container;
 
   private back: Phaser.GameObjects.Sprite;
@@ -31,13 +28,13 @@ export default class PlayerCard
 
   private calculator;
 
+  private parser;
+
   constructor(
     scene: Phaser.Scene,
     title: string,
     effect: string,
     image: string,
-    intelModifier: number | [number, number],
-    suspicionModifier: number | [number, number],
     backStyle = 'card-back',
     x = 0,
     y = 0,
@@ -50,9 +47,9 @@ export default class PlayerCard
     this.effect = effect;
     this.image = image;
     this.backStyle = backStyle;
-    this.intelModifier = intelModifier;
-    this.suspicionModifier = suspicionModifier;
-    this.calculator = new ModifierCalculator(intelModifier, suspicionModifier);
+
+    this.parser = new Parser(effect);
+    this.calculator = new ModifierCalculator(this.parser.instructions[0]);
 
     this.setSize(CARD_WIDTH, CARD_WIDTH);
     this.setInteractive();
@@ -60,7 +57,7 @@ export default class PlayerCard
     scene.add.existing(this);
 
     this.renderBack(scene, x, y, backStyle);
-    this.renderFront(scene, x, y, title, effect, image);
+    this.renderFront(scene, x, y, title, this.parser.sanitizedText, image);
     this.add([this.back, this.front]);
     this.displayManager = new CardDisplayManager(
       this,
@@ -153,8 +150,6 @@ export default class PlayerCard
       this.title,
       this.effect,
       this.image,
-      this.intelModifier,
-      this.suspicionModifier,
       this.backStyle,
       this.x,
       this.y

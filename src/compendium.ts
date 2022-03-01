@@ -49,17 +49,13 @@ export default class Compendium {
           this.scene,
           'Prod',
           '<Gain 0-2 intel>. If 0 intel is gained then suspicion is increased by 1-2.',
-          playerCard1Name,
-          [0, 2],
-          0
+          playerCard1Name
         ),
         new PlayerCard(
           this.scene,
           'Small Talk',
           '<Gain 0-1 intel>.',
-          playerCard2Name,
-          [0, 1],
-          0
+          playerCard2Name
         ),
       ];
 
@@ -68,25 +64,19 @@ export default class Compendium {
           this.scene,
           'Chit-Chat',
           '<Gain 0-2 intel>.',
-          opponentCard1Name,
-          [0, 2],
-          1
+          opponentCard1Name
         ),
         new OpponentCard(
           this.scene,
           'Suspect',
           '<Gain 1-2 suspicion>.',
-          opponentCard2Name,
-          0,
-          [1, 2]
+          opponentCard2Name
         ),
         new OpponentCard(
           this.scene,
           'Think',
           '<Gain 0-1 suspicion>.',
-          opponentCard3Name,
-          0,
-          [0, 1]
+          opponentCard3Name
         ),
       ];
     });

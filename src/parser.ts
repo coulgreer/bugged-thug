@@ -1,5 +1,9 @@
 import Keyword from './keyword';
 
+export const MODIFIER_INDEX = 0;
+export const QUANTIFIER_INDEX = 1;
+export const SUBJECT_INDEX = 2;
+
 export default class Parser {
   rawText;
 
