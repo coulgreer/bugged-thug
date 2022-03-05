@@ -2,7 +2,6 @@ import Displayable from './displayable';
 import Modifier from './modifier';
 import Orientation from './orientation';
 
-
 export const WIDTH = 210;
 export const HEIGHT = 280;
 export const SCALE = 0.6;

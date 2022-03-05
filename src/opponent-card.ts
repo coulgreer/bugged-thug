@@ -49,7 +49,7 @@ export default class OpponentCard
     this.backStyle = backStyle;
 
     this.parser = new Parser(effect);
-    this.calculator = new ModifierCalculator(this.parser.instructions[0]);
+    this.calculator = new ModifierCalculator(this.parser.instructions);
 
     scene.add.existing(this);
 
@@ -118,12 +118,12 @@ export default class OpponentCard
     return this;
   }
 
-  modifyIntel(intel: number) {
-    return this.calculator.modifyIntel(intel);
+  getIntelligenceModifier() {
+    return this.calculator.getIntelligenceModifier();
   }
 
-  modifySuspicion(suspicion: number) {
-    return this.calculator.modifySuspicion(suspicion);
+  getSuspicionModifier() {
+    return this.calculator.getSuspicionModifier();
   }
 
   getTitle() {

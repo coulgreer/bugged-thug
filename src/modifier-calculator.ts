@@ -7,27 +7,19 @@ export default class ModifierCalculator implements Modifier {
 
   suspicionModifier: number | [number, number];
 
-  constructor(instruction: [Keyword, string, Keyword]) {
-    let magnitude;
-    switch (instruction[MODIFIER_INDEX]) {
-      case Keyword.GAIN:
-        magnitude = 1;
-        break;
-      case Keyword.LOSE:
-        magnitude = -1;
-        break;
-      default:
-        throw new Error();
-    }
+  constructor(instructions: [Keyword, string, Keyword][]) {
+    const instruction: [Keyword, string, Keyword] =
+      instructions.length > 0
+        ? instructions[0]
+        : [Keyword.GAIN, '0', Keyword.INTELLIGENCE];
 
-    const matches = instruction[QUANTIFIER_INDEX].match(/\d+-\d+/);
-    const hasRange = matches.length > 0;
-    const modifier: number | [number, number] = hasRange
-      ? [
-          magnitude * Number.parseInt(matches[0], 10),
-          magnitude * Number.parseInt(matches[1], 10),
-        ]
-      : magnitude * Number.parseInt(instruction[QUANTIFIER_INDEX], 10);
+    const magnitude = ModifierCalculator.getMagnitude(
+      instruction[MODIFIER_INDEX]
+    );
+    const modifier = ModifierCalculator.getModifier(
+      magnitude,
+      instruction[QUANTIFIER_INDEX]
+    );
 
     const subject = instruction[SUBJECT_INDEX];
 
@@ -35,19 +27,45 @@ export default class ModifierCalculator implements Modifier {
     this.suspicionModifier = subject === Keyword.SUSPICION ? modifier : 0;
   }
 
-  modifyIntel(intel: number) {
+  private static getMagnitude(keyword: Keyword) {
+    switch (keyword) {
+      case Keyword.GAIN:
+        return 1;
+      case Keyword.LOSE:
+        return -1;
+      default:
+        throw new Error();
+    }
+  }
+
+  private static getModifier(
+    magnitude: number,
+    str: string
+  ): number | [number, number] {
+    const matches = str.match(/\d+-\d+/);
+    const hasRange = matches && matches.length > 0;
+
+    if (hasRange) {
+      return [
+        magnitude * Number.parseInt(matches[0], 10),
+        magnitude * Number.parseInt(matches[1], 10),
+      ];
+    }
+
+    return magnitude * Number.parseInt(str, 10);
+  }
+
+  getIntelligenceModifier() {
     if (Array.isArray(this.intelModifier)) {
       const min = Math.min(this.intelModifier[0], this.intelModifier[1]);
       const max = Math.max(this.intelModifier[0], this.intelModifier[1]);
-      const value = Math.floor(Math.random() * (max - min + 1) + min);
-
-      return intel + value;
+      return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    return intel + this.intelModifier;
+    return this.intelModifier;
   }
 
-  modifySuspicion(suspicion: number) {
+  getSuspicionModifier() {
     if (Array.isArray(this.suspicionModifier)) {
       const min = Math.min(
         this.suspicionModifier[0],
@@ -57,11 +75,9 @@ export default class ModifierCalculator implements Modifier {
         this.suspicionModifier[0],
         this.suspicionModifier[1]
       );
-      const value = Math.floor(Math.random() * (max - min + 1) + min);
-
-      return suspicion + value;
+      return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    return suspicion + this.suspicionModifier;
+    return this.suspicionModifier;
   }
 }

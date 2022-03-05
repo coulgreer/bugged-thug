@@ -38,7 +38,7 @@ export default class PlayerCard
     backStyle = 'card-back',
     x = 0,
     y = 0,
-    isFlipped = false
+    isFlipped = false,
   ) {
     super(scene, x, y);
 
@@ -49,7 +49,7 @@ export default class PlayerCard
     this.backStyle = backStyle;
 
     this.parser = new Parser(effect);
-    this.calculator = new ModifierCalculator(this.parser.instructions[0]);
+    this.calculator = new ModifierCalculator(this.parser.instructions);
 
     this.setSize(CARD_WIDTH, CARD_WIDTH);
     this.setInteractive();
@@ -123,12 +123,12 @@ export default class PlayerCard
     return this;
   }
 
-  modifyIntel(intel: number) {
-    return this.calculator.modifyIntel(intel);
+  getIntelligenceModifier() {
+    return this.calculator.getIntelligenceModifier();
   }
 
-  modifySuspicion(suspicion: number) {
-    return this.calculator.modifySuspicion(suspicion);
+  getSuspicionModifier() {
+    return this.calculator.getSuspicionModifier();
   }
 
   getTitle() {
