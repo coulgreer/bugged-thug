@@ -11,6 +11,7 @@ import cardBackImage from './images/card-back.png';
 import Orientation from './orientation';
 import Deck from './deck';
 import CardEntry from './card-entry';
+import Player from './player';
 
 const cardBackName = 'card-back';
 
@@ -18,33 +19,31 @@ const canvasWidth = CARD_WIDTH * CARD_SCALE * 10;
 const canvasHeight = CARD_HEIGHT * CARD_SCALE * 3;
 
 class Scene extends Phaser.Scene {
-  static xDraw = (CARD_WIDTH * CARD_SCALE) / 2;
+  private static xDraw = (CARD_WIDTH * CARD_SCALE) / 2;
 
-  keyR: Phaser.Input.Keyboard.Key;
+  private keyR: Phaser.Input.Keyboard.Key;
 
-  keyS: Phaser.Input.Keyboard.Key;
+  private keyS: Phaser.Input.Keyboard.Key;
 
-  keyD: Phaser.Input.Keyboard.Key;
+  private keyD: Phaser.Input.Keyboard.Key;
 
-  keySpace: Phaser.Input.Keyboard.Key;
+  private keySpace: Phaser.Input.Keyboard.Key;
 
-  intelScore: number;
+  private player: Player;
 
-  intelText: Phaser.GameObjects.Text;
+  private intelText: Phaser.GameObjects.Text;
 
-  suspicionScore: number;
+  private suspicionText: Phaser.GameObjects.Text;
 
-  suspicionText: Phaser.GameObjects.Text;
+  private compendium: Compendium;
 
-  compendium: Compendium;
+  private playerDeck: Deck;
 
-  playerDeck: Deck;
+  private playerHand: Card[] = [];
 
-  playerHand: Card[] = [];
+  private opponentDeck: Deck;
 
-  opponentDeck: Deck;
-
-  static deal(cards: Card[], y = (CARD_HEIGHT * CARD_SCALE) / 2) {
+  private static deal(cards: Card[], y = (CARD_HEIGHT * CARD_SCALE) / 2) {
     const padding = 3;
     let x = (CARD_WIDTH * CARD_SCALE) / 2;
 
@@ -53,23 +52,6 @@ class Scene extends Phaser.Scene {
       card.getContainer().setPosition(x, y);
 
       x = x + padding + CARD_WIDTH * CARD_SCALE;
-    });
-  }
-
-  draw() {
-    const padding = 3;
-    const cards = this.playerDeck.draw();
-
-    cards.forEach((card) => {
-      Scene.xDraw += CARD_WIDTH * CARD_SCALE + padding;
-      card.setOrientation(Orientation.FRONT);
-      card
-        .getContainer()
-        .setPosition(
-          Scene.xDraw,
-          canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2
-        );
-      this.playerHand.push(card);
     });
   }
 
@@ -85,6 +67,7 @@ class Scene extends Phaser.Scene {
       Phaser.Input.Keyboard.KeyCodes.SPACE
     );
 
+    this.player = new Player();
     this.compendium = new Compendium(this);
     this.renderScore();
 
@@ -101,8 +84,8 @@ class Scene extends Phaser.Scene {
   }
 
   update() {
-    this.intelText.setText(`Intel: ${this.intelScore}`);
-    this.suspicionText.setText(`Suspicion: ${this.suspicionScore}`);
+    this.intelText.setText(this.getIntelligenceText());
+    this.suspicionText.setText(this.getSuspicionText());
 
     if (Phaser.Input.Keyboard.JustDown(this.keySpace)) {
       this.opponentDeck.cardPile.forEach((card) => card.flip());
@@ -119,18 +102,33 @@ class Scene extends Phaser.Scene {
     }
   }
 
+  private draw() {
+    const padding = 3;
+    const cards = this.playerDeck.draw();
+
+    cards.forEach((card) => {
+      Scene.xDraw += CARD_WIDTH * CARD_SCALE + padding;
+      card.setOrientation(Orientation.FRONT);
+      card
+        .getContainer()
+        .setPosition(
+          Scene.xDraw,
+          canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2
+        );
+      this.playerHand.push(card);
+    });
+  }
+
   private renderScore() {
     const padding = 10;
     let y = CARD_HEIGHT * CARD_SCALE * 1.5;
-    this.intelScore = 0;
-    this.suspicionScore = 0;
 
-    this.intelText = this.add.text(0, y, `Intel: ${this.intelScore}`);
+    this.intelText = this.add.text(0, y, this.getIntelligenceText());
     this.intelText.setPadding(padding);
 
     y += this.intelText.height - padding * 2;
 
-    this.suspicionText = this.add.text(0, y, `Suspicion: ${this.suspicionScore}`);
+    this.suspicionText = this.add.text(0, y, this.getSuspicionText());
     this.suspicionText.setPadding(padding);
   }
 
@@ -152,6 +150,14 @@ class Scene extends Phaser.Scene {
       .map((card) => new CardEntry(card, 1));
 
     return new Deck(entries, 0, 0);
+  }
+
+  private getIntelligenceText() {
+    return `Intel: ${this.player.getIntelligence()}`;
+  }
+
+  private getSuspicionText() {
+    return `Suspicion: ${this.player.getSuspicion()}`;
   }
 }
 
