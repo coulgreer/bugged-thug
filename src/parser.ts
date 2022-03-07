@@ -36,9 +36,9 @@ export default class Parser {
 
   private static findModifier(text: string) {
     const hasPositiveModifier =
-      text.match(new RegExp(Keyword.GAIN, 'i')).length > 0;
+      text.match(new RegExp(Keyword.GAIN, 'i'))?.length > 0;
     const hasNegativeModifier =
-      text.match(new RegExp(Keyword.LOSE, 'i')).length > 0;
+      text.match(new RegExp(Keyword.LOSE, 'i'))?.length > 0;
 
     if (hasPositiveModifier) return Keyword.GAIN;
 
@@ -53,9 +53,9 @@ export default class Parser {
 
   private static findSubject(text: string) {
     const isIntelligence =
-      text.match(new RegExp(Keyword.INTELLIGENCE, 'i')).length > 0;
+      text.match(new RegExp(Keyword.INTELLIGENCE, 'i'))?.length > 0;
     const isSuspicion =
-      text.match(new RegExp(Keyword.SUSPICION, 'i')).length > 0;
+      text.match(new RegExp(Keyword.SUSPICION, 'i'))?.length > 0;
 
     if (isIntelligence) return Keyword.INTELLIGENCE;
 
@@ -69,9 +69,11 @@ export default class Parser {
     this.sanitizedText = Parser.sanitizeText(text);
 
     const regex = new RegExp(
-      `(?<=<.*)(${Keyword.GAIN}|${Keyword.LOSE}) \\d+(-\\d+)? (${Keyword.INTELLIGENCE}|${Keyword.SUSPICION})(?=.*>)`
+      `(?<=<.*)(${Keyword.GAIN}|${Keyword.LOSE}) \\d+(-\\d+)? (${Keyword.INTELLIGENCE}|${Keyword.SUSPICION})(?=.*>)`,
+      'gi'
     );
     const context = text.match(regex);
+
     this.instructions = Parser.parseContext(context);
   }
 }
