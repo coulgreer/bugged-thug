@@ -68,7 +68,7 @@ class Scene extends Phaser.Scene {
     );
 
     this.player = new Player();
-    this.compendium = new Compendium(this);
+    this.compendium = new Compendium(this, this.player);
     this.renderScore();
 
     this.load.once(Phaser.Loader.Events.COMPLETE, () => {
@@ -115,6 +115,7 @@ class Scene extends Phaser.Scene {
           Scene.xDraw,
           canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2
         );
+      card.draw();
       this.playerHand.push(card);
     });
   }

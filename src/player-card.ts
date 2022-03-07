@@ -18,7 +18,11 @@ export default class PlayerCard
 
   private effect;
 
+  private onClick;
+
   private image;
+
+  private drawn;
 
   private front: Phaser.GameObjects.Container;
 
@@ -34,26 +38,36 @@ export default class PlayerCard
     scene: Phaser.Scene,
     title: string,
     effect: string,
+    handleClick: (intel: number, suspicion: number) => void,
     image: string,
     backStyle = 'card-back',
     x = 0,
     y = 0,
     isFlipped = false,
+    drawn = false
   ) {
     super(scene, x, y);
 
     this.id = nanoid();
     this.title = title;
     this.effect = effect;
+    this.onClick = handleClick;
     this.image = image;
     this.backStyle = backStyle;
+    this.drawn = drawn;
 
     this.parser = new Parser(effect);
     this.calculator = new ModifierCalculator(this.parser.instructions);
 
     this.setSize(CARD_WIDTH, CARD_WIDTH);
     this.setInteractive();
-    this.on('pointerdown', () => this.flip());
+    this.on('pointerdown', () => {
+      if (this.drawn) {
+        this.play();
+      } else {
+        this.flip();
+      }
+    });
     scene.add.existing(this);
 
     this.renderBack(scene, x, y, backStyle);
@@ -111,18 +125,6 @@ export default class PlayerCard
     ]);
   }
 
-  flip() {
-    this.displayManager.flip();
-  }
-
-  setOrientation(o: Orientation) {
-    this.displayManager.setOrientation(o);
-  }
-
-  getContainer() {
-    return this;
-  }
-
   getIntelligenceModifier() {
     return this.calculator.getIntelligenceModifier();
   }
@@ -143,12 +145,44 @@ export default class PlayerCard
     return `CP${this.id}`;
   }
 
+  getContainer() {
+    return this;
+  }
+
+  isDrawn() {
+    return this.drawn;
+  }
+
+  flip() {
+    this.displayManager.flip();
+  }
+
+  play() {
+    this.drawn = false;
+    this.onClick(this.getIntelligenceModifier(), this.getSuspicionModifier());
+    this.displayManager.setShown(false);
+  }
+
+  draw() {
+    this.drawn = true;
+  }
+
+  discard() {
+    this.drawn = false;
+    this.displayManager.setShown(true);
+  }
+
+  setOrientation(o: Orientation) {
+    this.displayManager.setOrientation(o);
+  }
+
   // eslint-disable-next-line class-methods-use-this
   clone() {
     return new PlayerCard(
       this.scene,
       this.title,
       this.effect,
+      this.onClick,
       this.image,
       this.backStyle,
       this.x,

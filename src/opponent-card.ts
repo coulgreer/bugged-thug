@@ -106,18 +106,6 @@ export default class OpponentCard
     ]);
   }
 
-  flip() {
-    this.displayManager.flip();
-  }
-
-  setOrientation(o: Orientation) {
-    this.displayManager.setOrientation(o);
-  }
-
-  getContainer() {
-    return this;
-  }
-
   getIntelligenceModifier() {
     return this.calculator.getIntelligenceModifier();
   }
@@ -136,6 +124,35 @@ export default class OpponentCard
 
   getId() {
     return `CO${this.id}`;
+  }
+
+  getContainer() {
+    return this;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  isDrawn() {
+    return true;
+  }
+
+  flip() {
+    this.displayManager.flip();
+  }
+
+  play() {
+    this.displayManager.setShown(false);
+  }
+  
+  draw() {
+    this.displayManager.setShown(true);
+  }
+  
+  discard() {
+    this.displayManager.setShown(false);
+  }
+
+  setOrientation(o: Orientation) {
+    this.displayManager.setOrientation(o);
   }
 
   // eslint-disable-next-line class-methods-use-this

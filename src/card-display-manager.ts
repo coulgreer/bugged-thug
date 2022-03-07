@@ -37,6 +37,10 @@ export default class CardDisplayManager {
     }
   }
 
+  setShown(isShown: boolean) {
+    this.parent.setVisible(isShown);
+  }
+
   setOrientation(o: Orientation) {
     switch (o) {
       case Orientation.FRONT:

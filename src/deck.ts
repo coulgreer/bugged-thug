@@ -30,53 +30,12 @@ export default class Deck {
     });
   }
 
-  combine(c: Card | Card[], position: Orientation.TOP | Orientation.BOTTOM) {
-    if (Array.isArray(c)) {
-      c.forEach((card) => this.combine(card, position));
-    } else {
-      const container = c.getContainer();
-      container.setInteractive();
-      this.addCardToPile(c, position);
-      this.normalizeDepth(c, position);
-    }
-  }
-
-  draw(amount = 1) {
-    const drawnCards: Card[] = [];
-
-    if (this.cardPile.length < 1) return drawnCards;
-
-    for (let x = 0; x < amount; x += 1) {
-      drawnCards.push(this.cardPile.shift());
-    }
-
-    drawnCards.forEach((card) => {
-      const sprite = card.getContainer();
-      sprite.input.enabled = false;
-    });
-
-    return drawnCards;
-  }
-
-  shuffle() {
-    for (let x = this.cardPile.length - 1; x > 0; x -= 1) {
-      const y = Math.floor(Math.random() * (x + 1));
-      [this.cardPile[x], this.cardPile[y]] = [
-        this.cardPile[y],
-        this.cardPile[x],
-      ];
-    }
-    this.normalize();
-  }
-
-  setScale(value: number) {
-    this.cardPile.forEach((card) => card.getContainer().setScale(value));
-  }
-
   private addCardToPile(
     card: Card,
     position: Orientation.TOP | Orientation.BOTTOM
   ) {
+    card.discard();
+
     switch (position) {
       case Orientation.TOP: {
         this.cardPile = [card, ...this.cardPile];
@@ -91,6 +50,7 @@ export default class Deck {
     }
   }
 
+  // TODO (Coul Greer): Remove all dead code used to build deck until the code is needed.
   private addCardToDeck(card: Card) {
     let entry: CardEntry;
     if (this.hasEntry(card)) {
@@ -132,6 +92,7 @@ export default class Deck {
     });
   }
 
+  // TODO: Remove
   private hasEntry(card: Card) {
     let hasEntry = false;
 
@@ -147,6 +108,7 @@ export default class Deck {
     return hasEntry;
   }
 
+  // TODO: Remove
   private findEntry(card: Card) {
     let target: CardEntry;
 
@@ -160,5 +122,45 @@ export default class Deck {
     });
 
     return target;
+  }
+
+  combine(c: Card | Card[], position: Orientation.TOP | Orientation.BOTTOM) {
+    if (Array.isArray(c)) {
+      c.forEach((card) => this.combine(card, position));
+    } else {
+      const container = c.getContainer();
+      container.setInteractive();
+      this.addCardToPile(c, position);
+      this.normalizeDepth(c, position);
+    }
+  }
+
+  draw(amount = 1) {
+    const drawnCards: Card[] = [];
+
+    if (this.cardPile.length < 1) return drawnCards;
+
+    for (let x = 0; x < amount; x += 1) {
+      const card = this.cardPile.shift();
+      card.draw();
+      drawnCards.push(card);
+    }
+
+    return drawnCards;
+  }
+
+  shuffle() {
+    for (let x = this.cardPile.length - 1; x > 0; x -= 1) {
+      const y = Math.floor(Math.random() * (x + 1));
+      [this.cardPile[x], this.cardPile[y]] = [
+        this.cardPile[y],
+        this.cardPile[x],
+      ];
+    }
+    this.normalize();
+  }
+
+  setScale(value: number) {
+    this.cardPile.forEach((card) => card.getContainer().setScale(value));
   }
 }
