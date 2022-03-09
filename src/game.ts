@@ -96,6 +96,7 @@ class Scene extends Phaser.Scene {
     if (Phaser.Input.Keyboard.JustDown(this.keyS)) this.playerDeck.shuffle();
 
     if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
+      this.player.reset();
       this.playerDeck.combine(this.playerHand, Orientation.TOP);
       this.playerHand = [];
       Scene.xDraw = (CARD_WIDTH * CARD_SCALE) / 2;

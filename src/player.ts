@@ -8,6 +8,11 @@ export default class Player {
     this.intelligence = 0;
   }
 
+  reset() {
+    this.intelligence = 0;
+    this.suspicion = 0;
+  }
+
   increaseIntelligence(intel: number) {
     this.intelligence += intel;
   }
