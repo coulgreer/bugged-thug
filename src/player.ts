@@ -1,16 +1,19 @@
+const STARTING_SUSPICION_SCORE = 0;
+const STARTING_INTELLIGENCE_SCORE = 0;
+
 export default class Player {
   private suspicion;
 
   private intelligence;
 
   constructor() {
-    this.suspicion = 0;
-    this.intelligence = 0;
+    this.intelligence = STARTING_INTELLIGENCE_SCORE;
+    this.suspicion = STARTING_SUSPICION_SCORE;
   }
 
   reset() {
-    this.intelligence = 0;
-    this.suspicion = 0;
+    this.intelligence = STARTING_INTELLIGENCE_SCORE;
+    this.suspicion = STARTING_SUSPICION_SCORE;
   }
 
   increaseIntelligence(intel: number) {
