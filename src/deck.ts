@@ -48,18 +48,6 @@ export default class Deck {
     }
   }
 
-  // TODO (Coul Greer): Remove all dead code used to build deck until the code is needed.
-  private addCardToDeck(card: Card) {
-    let entry: CardEntry;
-    if (this.hasEntry(card)) {
-      const target = this.findEntry(card);
-      target.increaseCount();
-    } else {
-      entry = new CardEntry(card, 1);
-      this.cardEntries.push(entry);
-    }
-  }
-
   private normalizeDepth(
     card: Card,
     position: Orientation.TOP | Orientation.BOTTOM
@@ -88,38 +76,6 @@ export default class Deck {
     this.cardPile.forEach((card, i) => {
       card.getContainer().setDepth(startingIndex - i);
     });
-  }
-
-  // TODO: Remove
-  private hasEntry(card: Card) {
-    let hasEntry = false;
-
-    this.cardEntries.every((entry) => {
-      if (entry.getCards()[0].getId() === card.getId()) {
-        hasEntry = true;
-        return false;
-      }
-
-      return true;
-    });
-
-    return hasEntry;
-  }
-
-  // TODO: Remove
-  private findEntry(card: Card) {
-    let target: CardEntry;
-
-    this.cardEntries.every((entry) => {
-      if (entry.getCards()[0].getId() === card.getId()) {
-        target = entry;
-        return false;
-      }
-
-      return true;
-    });
-
-    return target;
   }
 
   combine(c: Card | Card[], position: Orientation.TOP | Orientation.BOTTOM) {
