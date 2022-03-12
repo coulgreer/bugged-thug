@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import Card, { WIDTH as CARD_WIDTH, HEIGHT as CARD_HEIGHT } from './card';
 import CardDisplayManager from './card-display-manager';
 import ModifierCalculator from './modifier-calculator';
+import Observer from './observer';
 import Orientation from './orientation';
 import Parser from './parser';
 
@@ -30,6 +31,8 @@ export default class OpponentCard
 
   private parser;
 
+  private subscribers: Observer[];
+
   constructor(
     scene: Phaser.Scene,
     title: string,
@@ -50,6 +53,7 @@ export default class OpponentCard
 
     this.parser = new Parser(effect);
     this.calculator = new ModifierCalculator(this.parser.instructions);
+    this.subscribers = [];
 
     scene.add.existing(this);
 
@@ -142,11 +146,11 @@ export default class OpponentCard
   play() {
     this.displayManager.setShown(false);
   }
-  
+
   draw() {
     this.displayManager.setShown(true);
   }
-  
+
   discard() {
     this.displayManager.setShown(false);
   }
@@ -155,9 +159,27 @@ export default class OpponentCard
     this.displayManager.setOrientation(o);
   }
 
+  addSubscriber(observer: Observer) {
+    this.subscribers.push(observer);
+  }
+
+  removeSubscriber(observer: Observer) {
+    const index = this.subscribers.findIndex((o) => o.isEqual(observer));
+    this.subscribers.splice(index);
+  }
+
+  notify() {
+    this.subscribers.forEach((subscriber) =>
+      subscriber.update(
+        this.getIntelligenceModifier(),
+        this.getSuspicionModifier()
+      )
+    );
+  }
+
   // eslint-disable-next-line class-methods-use-this
   clone() {
-    return new OpponentCard(
+    const clone = new OpponentCard(
       this.scene,
       this.title,
       this.effect,
@@ -166,5 +188,7 @@ export default class OpponentCard
       this.x,
       this.y
     );
+    this.subscribers.forEach((subscriber) => clone.addSubscriber(subscriber));
+    return clone;
   }
 }

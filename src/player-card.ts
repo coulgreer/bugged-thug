@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import Card, { WIDTH as CARD_WIDTH, HEIGHT as CARD_HEIGHT } from './card';
 import CardDisplayManager from './card-display-manager';
 import ModifierCalculator from './modifier-calculator';
+import Observer from './observer';
 import Orientation from './orientation';
 import Parser from './parser';
 
@@ -18,8 +19,6 @@ export default class PlayerCard
 
   private effect;
 
-  private onClick;
-
   private image;
 
   private drawn;
@@ -34,11 +33,12 @@ export default class PlayerCard
 
   private parser;
 
+  private subscribers: Observer[];
+
   constructor(
     scene: Phaser.Scene,
     title: string,
     effect: string,
-    handleClick: (intel: number, suspicion: number) => void,
     image: string,
     backStyle = 'card-back',
     x = 0,
@@ -51,13 +51,14 @@ export default class PlayerCard
     this.id = nanoid();
     this.title = title;
     this.effect = effect;
-    this.onClick = handleClick;
     this.image = image;
     this.backStyle = backStyle;
     this.drawn = drawn;
 
     this.parser = new Parser(effect);
     this.calculator = new ModifierCalculator(this.parser.instructions);
+
+    this.subscribers = [];
 
     this.setSize(CARD_WIDTH, CARD_WIDTH);
     this.setInteractive();
@@ -159,8 +160,8 @@ export default class PlayerCard
 
   play() {
     this.drawn = false;
-    this.onClick(this.getIntelligenceModifier(), this.getSuspicionModifier());
     this.displayManager.setShown(false);
+    this.notify();
   }
 
   draw() {
@@ -176,17 +177,35 @@ export default class PlayerCard
     this.displayManager.setOrientation(o);
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  addSubscriber(observer: Observer) {
+    this.subscribers.push(observer);
+  }
+
+  removeSubscriber(observer: Observer) {
+    const index = this.subscribers.findIndex((o) => o.isEqual(observer));
+    this.subscribers.splice(index);
+  }
+
+  notify() {
+    this.subscribers.forEach((subscriber) =>
+      subscriber.update(
+        this.getIntelligenceModifier(),
+        this.getSuspicionModifier()
+      )
+    );
+  }
+
   clone() {
-    return new PlayerCard(
+    const clone = new PlayerCard(
       this.scene,
       this.title,
       this.effect,
-      this.onClick,
       this.image,
       this.backStyle,
       this.x,
       this.y
     );
+    this.subscribers.forEach((subscriber) => clone.addSubscriber(subscriber));
+    return clone;
   }
 }

@@ -68,7 +68,7 @@ class Scene extends Phaser.Scene {
     );
 
     this.player = new Player();
-    this.compendium = new Compendium(this, this.player);
+    this.compendium = new Compendium(this);
     this.renderScore();
 
     this.load.once(Phaser.Loader.Events.COMPLETE, () => {
@@ -135,9 +135,10 @@ class Scene extends Phaser.Scene {
   }
 
   private createPlayerDeck() {
-    const entries = this.compendium
-      .getPlayerCards()
-      .map((card) => new CardEntry(card, 3));
+    const entries = this.compendium.getPlayerCards().map((card) => {
+      card.addSubscriber(this.player);
+      return new CardEntry(card, 3);
+    });
 
     return new Deck(
       entries,
@@ -147,9 +148,10 @@ class Scene extends Phaser.Scene {
   }
 
   private createOpponentDeck() {
-    const entries = this.compendium
-      .getOpponentCards()
-      .map((card) => new CardEntry(card, 1));
+    const entries = this.compendium.getOpponentCards().map((card) => {
+      card.addSubscriber(this.player);
+      return new CardEntry(card, 1);
+    });
 
     return new Deck(entries, 0, 0);
   }

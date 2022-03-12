@@ -18,9 +18,7 @@ export default class Deck {
     this.yPos = yPos;
 
     cardEntries.forEach((entry) => {
-      entry.getCards().forEach((card) => {
-        this.cardPile.push(card);
-      });
+      entry.getCards().forEach((card) => this.cardPile.push(card));
     });
 
     this.cardPile.forEach((card, i) => {

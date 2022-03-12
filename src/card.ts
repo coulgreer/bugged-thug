@@ -1,5 +1,6 @@
 import Displayable from './displayable';
 import Modifier from './modifier';
+import Observer from './observer';
 import Orientation from './orientation';
 
 export const WIDTH = 210;
@@ -15,5 +16,8 @@ export default interface Card extends Modifier, Displayable {
   draw(): void;
   discard(): void;
   setOrientation(o: Orientation): void;
+  addSubscriber(observer: Observer): void;
+  removeSubscriber(observer: Observer): void;
+  notify(): void;
   clone(): Card;
 }

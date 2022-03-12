@@ -11,7 +11,6 @@ import opponentCardFrame from './images/opponent-frame.png';
 import opponentCard1Image from './images/chit-chat.png';
 import opponentCard2Image from './images/suspect.png';
 import opponentCard3Image from './images/think.png';
-import Player from './player';
 
 // Player Cards
 const playerFrameName = 'player-frame';
@@ -27,15 +26,12 @@ const opponentCard3Name = 'think';
 export default class Compendium {
   scene;
 
-  player;
-
   playerCards: PlayerCard[];
 
   opponentCards: OpponentCard[];
 
-  constructor(scene: Scene, player: Player) {
+  constructor(scene: Scene) {
     this.scene = scene;
-    this.player = player;
     this.playerCards = [];
     this.opponentCards = [];
 
@@ -53,20 +49,12 @@ export default class Compendium {
           this.scene,
           'Prod',
           '<Gain 0-2 intel>. If 0 intel is gained then suspicion is increased by 1-2.',
-          (intel, suspicion) => {
-            player.increaseIntelligence(intel);
-            player.increaseSuspicion(suspicion);
-          },
           playerCard1Name
         ),
         new PlayerCard(
           this.scene,
           'Small Talk',
           '<Gain 0-1 intel>.',
-          (intel, suspicion) => {
-            player.increaseIntelligence(intel);
-            player.increaseSuspicion(suspicion);
-          },
           playerCard2Name
         ),
       ];
