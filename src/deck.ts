@@ -3,16 +3,13 @@ import CardEntry from './card-entry';
 import Orientation from './orientation';
 
 export default class Deck {
-  xPos: number;
+  private xPos: number;
 
-  yPos: number;
+  private yPos: number;
 
-  cardEntries: CardEntry[];
-
-  cardPile: Card[];
+  private cardPile: Card[];
 
   constructor(cardEntries: CardEntry[], xPos: number, yPos: number) {
-    this.cardEntries = cardEntries;
     this.cardPile = [];
     this.xPos = xPos;
     this.yPos = yPos;
@@ -78,9 +75,12 @@ export default class Deck {
     });
   }
 
-  combine(c: Card | Card[], position: Orientation.TOP | Orientation.BOTTOM) {
+  combine(c: Card | Card[] | Deck, position: Orientation.TOP | Orientation.BOTTOM) {
     if (Array.isArray(c)) {
       c.forEach((card) => this.combine(card, position));
+    } else if(c instanceof Deck) {
+      const cards = c.getCards();
+      this.combine(cards, position);
     } else {
       const container = c.getContainer();
       container.setInteractive();
@@ -112,6 +112,10 @@ export default class Deck {
       ];
     }
     this.normalize();
+  }
+
+  getCards() {
+    return this.cardPile;
   }
 
   setScale(value: number) {

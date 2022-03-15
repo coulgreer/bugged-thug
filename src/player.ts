@@ -1,4 +1,12 @@
+import {
+  WIDTH as CARD_WIDTH,
+  HEIGHT as CARD_HEIGHT,
+  SCALE as CARD_SCALE,
+} from './card';
+import CardEntry from './card-entry';
+import Deck from './deck';
 import Observer from './observer';
+import Orientation from './orientation';
 
 const STARTING_SUSPICION_SCORE = 0;
 const STARTING_INTELLIGENCE_SCORE = 0;
@@ -8,14 +16,36 @@ export default class Player implements Observer {
 
   private intelligence;
 
-  constructor() {
+  private drawPile;
+
+  private discardPile;
+
+  constructor(
+    canvasDimensions: { width: number; height: number },
+    master: CardEntry[]
+  ) {
     this.intelligence = STARTING_INTELLIGENCE_SCORE;
     this.suspicion = STARTING_SUSPICION_SCORE;
+
+    master.forEach((entry) =>
+      entry.cards.forEach((card) => card.addSubscriber(this))
+    );
+    this.drawPile = new Deck(
+      master,
+      (CARD_WIDTH * CARD_SCALE) / 2,
+      canvasDimensions.height - (CARD_HEIGHT * CARD_SCALE) / 2
+    );
+    this.discardPile = new Deck(
+      [],
+      canvasDimensions.width - (CARD_WIDTH * CARD_SCALE) / 2,
+      canvasDimensions.height - (CARD_HEIGHT * CARD_SCALE) / 2
+    );
   }
 
   reset() {
     this.intelligence = STARTING_INTELLIGENCE_SCORE;
     this.suspicion = STARTING_SUSPICION_SCORE;
+    this.drawPile.combine(this.discardPile, Orientation.TOP);
   }
 
   increaseIntelligence(intel: number) {
@@ -44,5 +74,13 @@ export default class Player implements Observer {
     if (obj instanceof Player) return true;
 
     return false;
+  }
+
+  getDrawPile() {
+    return this.drawPile;
+  }
+
+  getDiscardPile() {
+    return this.discardPile;
   }
 }

@@ -17,6 +17,7 @@ const cardBackName = 'card-back';
 
 const canvasWidth = CARD_WIDTH * CARD_SCALE * 10;
 const canvasHeight = CARD_HEIGHT * CARD_SCALE * 3;
+const dimensions = { width: canvasWidth, height: canvasHeight };
 
 class Scene extends Phaser.Scene {
   private static xDraw = (CARD_WIDTH * CARD_SCALE) / 2;
@@ -67,17 +68,17 @@ class Scene extends Phaser.Scene {
       Phaser.Input.Keyboard.KeyCodes.SPACE
     );
 
-    this.player = new Player();
     this.compendium = new Compendium(this);
     this.renderScore();
 
     this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-      this.playerDeck = this.createPlayerDeck();
+      this.player = new Player(dimensions, this.createPlayerDeck());
+      this.playerDeck = this.player.getDrawPile();
       this.playerDeck.setScale(CARD_SCALE);
 
       this.opponentDeck = this.createOpponentDeck();
       this.opponentDeck.setScale(CARD_SCALE);
-      Scene.deal(this.opponentDeck.cardPile);
+      Scene.deal(this.opponentDeck.getCards());
     });
 
     this.load.start();
@@ -88,7 +89,7 @@ class Scene extends Phaser.Scene {
     this.suspicionText.setText(this.getSuspicionText());
 
     if (Phaser.Input.Keyboard.JustDown(this.keySpace)) {
-      this.opponentDeck.cardPile.forEach((card) => card.flip());
+      this.opponentDeck.getCards().forEach((card) => card.flip());
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.keyD)) this.draw();
@@ -135,16 +136,9 @@ class Scene extends Phaser.Scene {
   }
 
   private createPlayerDeck() {
-    const entries = this.compendium.getPlayerCards().map((card) => {
-      card.addSubscriber(this.player);
-      return new CardEntry(card, 3);
-    });
-
-    return new Deck(
-      entries,
-      (CARD_WIDTH * CARD_SCALE) / 2,
-      canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2
-    );
+    return this.compendium
+      .getPlayerCards()
+      .map((card) => new CardEntry(card, 3));
   }
 
   private createOpponentDeck() {
@@ -157,11 +151,11 @@ class Scene extends Phaser.Scene {
   }
 
   private getIntelligenceText() {
-    return `Intel: ${this.player.getIntelligence()}`;
+    return `Intel: ${this.player?.getIntelligence() ?? 0}`;
   }
 
   private getSuspicionText() {
-    return `Suspicion: ${this.player.getSuspicion()}`;
+    return `Suspicion: ${this.player?.getSuspicion() ?? 0}`;
   }
 }
 
