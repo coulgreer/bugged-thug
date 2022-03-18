@@ -75,12 +75,18 @@ export default class Deck {
     });
   }
 
-  combine(c: Card | Card[] | Deck, position: Orientation.TOP | Orientation.BOTTOM) {
+  combine(
+    c: Card | Card[] | Deck,
+    position: Orientation.TOP | Orientation.BOTTOM
+  ) {
     if (Array.isArray(c)) {
-      c.forEach((card) => this.combine(card, position));
-    } else if(c instanceof Deck) {
-      const cards = c.getCards();
-      this.combine(cards, position);
+      while (c.length > 0) {
+        const target = 0
+        c.splice(target, 1);
+        this.combine(c[target], position);
+      }
+    } else if (c instanceof Deck) {
+      this.combine(c.getCards(), position);
     } else {
       const container = c.getContainer();
       container.setInteractive();

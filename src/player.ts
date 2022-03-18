@@ -1,4 +1,4 @@
-import {
+import Card, {
   WIDTH as CARD_WIDTH,
   HEIGHT as CARD_HEIGHT,
   SCALE as CARD_SCALE,
@@ -16,6 +16,8 @@ export default class Player implements Observer {
 
   private intelligence;
 
+  private handPile: Card[];
+
   private drawPile;
 
   private discardPile;
@@ -30,6 +32,7 @@ export default class Player implements Observer {
     master.forEach((entry) =>
       entry.cards.forEach((card) => card.addSubscriber(this))
     );
+    this.handPile = [];
     this.drawPile = new Deck(
       master,
       (CARD_WIDTH * CARD_SCALE) / 2,
@@ -46,6 +49,7 @@ export default class Player implements Observer {
     this.intelligence = STARTING_INTELLIGENCE_SCORE;
     this.suspicion = STARTING_SUSPICION_SCORE;
     this.drawPile.combine(this.discardPile, Orientation.TOP);
+    this.drawPile.combine(this.handPile, Orientation.TOP);
   }
 
   increaseIntelligence(intel: number) {
@@ -74,6 +78,10 @@ export default class Player implements Observer {
     if (obj instanceof Player) return true;
 
     return false;
+  }
+
+  getHandPile() {
+    return this.handPile;
   }
 
   getDrawPile() {

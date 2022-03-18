@@ -40,8 +40,6 @@ class Scene extends Phaser.Scene {
 
   private playerDeck: Deck;
 
-  private playerHand: Card[] = [];
-
   private opponentDeck: Deck;
 
   private static deal(cards: Card[], y = (CARD_HEIGHT * CARD_SCALE) / 2) {
@@ -98,8 +96,6 @@ class Scene extends Phaser.Scene {
 
     if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
       this.player.reset();
-      this.playerDeck.combine(this.playerHand, Orientation.TOP);
-      this.playerHand = [];
       Scene.xDraw = (CARD_WIDTH * CARD_SCALE) / 2;
     }
   }
@@ -118,7 +114,7 @@ class Scene extends Phaser.Scene {
           canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2
         );
       card.draw();
-      this.playerHand.push(card);
+      this.player.getHandPile().push(card);
     });
   }
 
