@@ -81,9 +81,8 @@ export default class Deck {
   ) {
     if (Array.isArray(c)) {
       while (c.length > 0) {
-        const target = 0
-        c.splice(target, 1);
-        this.combine(c[target], position);
+        const target = c.splice(0, 1);
+        this.combine(target[0], position);
       }
     } else if (c instanceof Deck) {
       this.combine(c.getCards(), position);
