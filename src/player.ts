@@ -68,9 +68,23 @@ export default class Player implements Observer {
     return this.suspicion;
   }
 
-  update(intel: number, suspicion: number) {
-    this.intelligence += intel;
-    this.suspicion += suspicion;
+  update(card: Card) {
+    this.increaseIntelligence(card.getIntelligenceModifier());
+    this.increaseSuspicion(card.getSuspicionModifier());
+
+    if (this.handPile.includes(card)) {
+      this.handPile.some((c, index) => {
+        const found = c === card;
+
+        if (found) {
+          const [removedCard] = this.handPile.splice(index, 1);
+          this.discardPile.combine(removedCard, Orientation.TOP);
+          removedCard.getContainer().setVisible(false);
+        }
+
+        return found;
+      });
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this

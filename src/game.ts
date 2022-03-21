@@ -40,6 +40,8 @@ class Scene extends Phaser.Scene {
 
   private playerDeck: Deck;
 
+  private discardPile: Phaser.GameObjects.Image;
+
   private opponentDeck: Deck;
 
   private static deal(cards: Card[], y = (CARD_HEIGHT * CARD_SCALE) / 2) {
@@ -74,6 +76,11 @@ class Scene extends Phaser.Scene {
       this.playerDeck = this.player.getDrawPile();
       this.playerDeck.setScale(CARD_SCALE);
 
+      const x = CARD_WIDTH * CARD_SCALE * 8;
+      const y = canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2;
+      this.discardPile = this.add.image(x, y, cardBackName);
+      this.discardPile.setScale(CARD_SCALE);
+
       this.opponentDeck = this.createOpponentDeck();
       this.opponentDeck.setScale(CARD_SCALE);
       Scene.deal(this.opponentDeck.getCards());
@@ -85,6 +92,10 @@ class Scene extends Phaser.Scene {
   update() {
     this.intelText.setText(this.getIntelligenceText());
     this.suspicionText.setText(this.getSuspicionText());
+
+    this.discardPile?.setVisible(
+      this.player.getDiscardPile().getCards().length > 0
+    );
 
     if (Phaser.Input.Keyboard.JustDown(this.keySpace)) {
       this.opponentDeck.getCards().forEach((card) => card.flip());

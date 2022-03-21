@@ -169,12 +169,7 @@ export default class OpponentCard
   }
 
   notify() {
-    this.subscribers.forEach((subscriber) =>
-      subscriber.update(
-        this.getIntelligenceModifier(),
-        this.getSuspicionModifier()
-      )
-    );
+    this.subscribers.forEach((subscriber) => subscriber.update(this));
   }
 
   // eslint-disable-next-line class-methods-use-this

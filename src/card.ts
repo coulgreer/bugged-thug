@@ -1,6 +1,6 @@
 import Displayable from './displayable';
 import Modifier from './modifier';
-import Observer from './observer';
+import type Observer from './observer';
 import Orientation from './orientation';
 
 export const WIDTH = 210;

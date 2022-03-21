@@ -187,12 +187,7 @@ export default class PlayerCard
   }
 
   notify() {
-    this.subscribers.forEach((subscriber) =>
-      subscriber.update(
-        this.getIntelligenceModifier(),
-        this.getSuspicionModifier()
-      )
-    );
+    this.subscribers.forEach((subscriber) => subscriber.update(this));
   }
 
   clone() {
