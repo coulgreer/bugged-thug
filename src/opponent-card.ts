@@ -118,20 +118,8 @@ export default class OpponentCard
     return this.calculator.getSuspicionModifier();
   }
 
-  getTitle() {
-    return this.title;
-  }
-
-  getDescription() {
-    return `${this.title}: This is a placeholder for the cards description.`;
-  }
-
   getId() {
     return `CO${this.id}`;
-  }
-
-  getContainer() {
-    return this;
   }
 
   // eslint-disable-next-line class-methods-use-this

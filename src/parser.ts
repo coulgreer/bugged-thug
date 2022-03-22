@@ -26,7 +26,7 @@ export default class Parser {
     context.forEach((match) => {
       instructions.push([
         Parser.findModifier(match),
-        Parser.findQuantifier(match)[0],
+        Parser.findQuantifier(match),
         Parser.findSubject(match),
       ]);
     });
@@ -48,7 +48,8 @@ export default class Parser {
   }
 
   private static findQuantifier(text: string) {
-    return text.match(/\d+(-\d+)?/);
+    const [quantifier] = text.match(/\d+(-\d+)?/);
+    return quantifier;
   }
 
   private static findSubject(text: string) {

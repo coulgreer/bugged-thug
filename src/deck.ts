@@ -9,7 +9,7 @@ export default class Deck {
 
   private cardPile: Card[];
 
-  constructor(cardEntries: CardEntry[], xPos: number, yPos: number) {
+  constructor(cardEntries: CardEntry[], xPos: number = 0, yPos: number = 0) {
     this.cardPile = [];
     this.xPos = xPos;
     this.yPos = yPos;
@@ -19,9 +19,8 @@ export default class Deck {
     });
 
     this.cardPile.forEach((card, i) => {
-      const container = card.getContainer();
-      container.setDepth(this.cardPile.length - i);
-      container.setPosition(xPos, yPos);
+      card.setDepth(this.cardPile.length - i);
+      card.setPosition(xPos, yPos);
     });
   }
 
@@ -51,17 +50,15 @@ export default class Deck {
   ) {
     switch (position) {
       case Orientation.TOP: {
-        const sprite = card.getContainer();
         this.normalize();
-        sprite.setDepth(this.cardPile.length + 1);
-        sprite.setPosition(this.xPos, this.yPos);
+        card.setDepth(this.cardPile.length + 1);
+        card.setPosition(this.xPos, this.yPos);
         break;
       }
       case Orientation.BOTTOM: {
-        const sprite = card.getContainer();
         this.normalize(this.cardPile.length + 1);
-        sprite.setDepth(0);
-        sprite.setPosition(this.xPos, this.yPos);
+        card.setDepth(0);
+        card.setPosition(this.xPos, this.yPos);
         break;
       }
       default:
@@ -70,9 +67,7 @@ export default class Deck {
   }
 
   private normalize(startingIndex = this.cardPile.length) {
-    this.cardPile.forEach((card, i) => {
-      card.getContainer().setDepth(startingIndex - i);
-    });
+    this.cardPile.forEach((card, i) => card.setDepth(startingIndex - i));
   }
 
   combine(
@@ -81,14 +76,13 @@ export default class Deck {
   ) {
     if (Array.isArray(c)) {
       while (c.length > 0) {
-        const target = c.splice(0, 1);
-        this.combine(target[0], position);
+        this.combine(c.shift(), position);
       }
     } else if (c instanceof Deck) {
       this.combine(c.getCards(), position);
+      c.clear();
     } else {
-      const container = c.getContainer();
-      container.setInteractive();
+      c.setInteractive();
       this.addCardToPile(c, position);
       this.normalizeDepth(c, position);
     }
@@ -120,10 +114,14 @@ export default class Deck {
   }
 
   getCards() {
-    return this.cardPile;
+    return Array.from(this.cardPile);
+  }
+
+  clear() {
+    this.cardPile = [];
   }
 
   setScale(value: number) {
-    this.cardPile.forEach((card) => card.getContainer().setScale(value));
+    this.cardPile.forEach((card) => card.setScale(value));
   }
 }

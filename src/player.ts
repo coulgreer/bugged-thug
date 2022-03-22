@@ -30,7 +30,7 @@ export default class Player implements Observer {
     this.suspicion = STARTING_SUSPICION_SCORE;
 
     master.forEach((entry) =>
-      entry.cards.forEach((card) => card.addSubscriber(this))
+      entry.getCards().forEach((card) => card.addSubscriber(this))
     );
     this.handPile = [];
     this.drawPile = new Deck(
@@ -43,6 +43,10 @@ export default class Player implements Observer {
       canvasDimensions.width - (CARD_WIDTH * CARD_SCALE) / 2,
       canvasDimensions.height - (CARD_HEIGHT * CARD_SCALE) / 2
     );
+  }
+
+  addToHand(c: Card) {
+    this.handPile.push(c);
   }
 
   reset() {
@@ -79,7 +83,7 @@ export default class Player implements Observer {
         if (found) {
           const [removedCard] = this.handPile.splice(index, 1);
           this.discardPile.combine(removedCard, Orientation.TOP);
-          removedCard.getContainer().setVisible(false);
+          removedCard.setVisible(false);
         }
 
         return found;
@@ -95,7 +99,7 @@ export default class Player implements Observer {
   }
 
   getHandPile() {
-    return this.handPile;
+    return Array.from(this.handPile);
   }
 
   getDrawPile() {

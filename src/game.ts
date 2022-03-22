@@ -50,7 +50,7 @@ class Scene extends Phaser.Scene {
 
     cards.forEach((card) => {
       card.setOrientation(Orientation.FRONT);
-      card.getContainer().setPosition(x, y);
+      card.setPosition(x, y);
 
       x = x + padding + CARD_WIDTH * CARD_SCALE;
     });
@@ -118,14 +118,12 @@ class Scene extends Phaser.Scene {
     cards.forEach((card) => {
       Scene.xDraw += CARD_WIDTH * CARD_SCALE + padding;
       card.setOrientation(Orientation.FRONT);
-      card
-        .getContainer()
-        .setPosition(
-          Scene.xDraw,
-          canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2
-        );
+      card.setPosition(
+        Scene.xDraw,
+        canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2
+      );
       card.draw();
-      this.player.getHandPile().push(card);
+      this.player.addToHand(card);
     });
   }
 
@@ -154,7 +152,7 @@ class Scene extends Phaser.Scene {
       return new CardEntry(card, 1);
     });
 
-    return new Deck(entries, 0, 0);
+    return new Deck(entries);
   }
 
   private getIntelligenceText() {

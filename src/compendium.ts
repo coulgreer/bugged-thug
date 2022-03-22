@@ -24,11 +24,11 @@ const opponentCard2Name = 'suspect';
 const opponentCard3Name = 'think';
 
 export default class Compendium {
-  scene;
+  private scene;
 
-  playerCards: PlayerCard[];
+  private playerCards: PlayerCard[];
 
-  opponentCards: OpponentCard[];
+  private opponentCards: OpponentCard[];
 
   constructor(scene: Scene) {
     this.scene = scene;

@@ -1,11 +1,9 @@
 import Card from './card';
 
 export default class CardEntry {
-  card: Card;
+  private card: Card;
 
-  count: number;
-
-  cards: Card[];
+  private cards: Card[];
 
   constructor(card: Card, count: number) {
     if (card === undefined || card === null)
@@ -15,7 +13,6 @@ export default class CardEntry {
       throw new Error('A card entry should have at least 1 card count');
 
     this.card = card;
-    this.count = count;
     this.cards = [];
 
     this.cards.push(this.card);

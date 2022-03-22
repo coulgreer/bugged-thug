@@ -22,14 +22,13 @@ export default class ModifierCalculator implements Modifier {
     magnitude: number,
     str: string
   ): number | [number, number] {
-    const matches = str.match(/\d+-\d+/);
-    const hasRange = matches?.length > 0;
-    if (hasRange) {
-      const digits = matches[0].match(/\d+/g);
+    const [result] = str.match(/\d+-\d+/);
+    if (result) {
+      const [first, second] = result.match(/\d+/g);
 
       return [
-        magnitude * Number.parseInt(digits[0], 10),
-        magnitude * Number.parseInt(digits[1], 10),
+        magnitude * Number.parseInt(first, 10),
+        magnitude * Number.parseInt(second, 10),
       ];
     }
 
@@ -59,8 +58,10 @@ export default class ModifierCalculator implements Modifier {
 
   getIntelligenceModifier() {
     if (Array.isArray(this.intelModifier)) {
-      const min = Math.min(this.intelModifier[0], this.intelModifier[1]);
-      const max = Math.max(this.intelModifier[0], this.intelModifier[1]);
+      const [first, second] = this.intelModifier;
+      const min = Math.min(first, second);
+      const max = Math.max(first, second);
+
       return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
@@ -69,14 +70,10 @@ export default class ModifierCalculator implements Modifier {
 
   getSuspicionModifier() {
     if (Array.isArray(this.suspicionModifier)) {
-      const min = Math.min(
-        this.suspicionModifier[0],
-        this.suspicionModifier[1]
-      );
-      const max = Math.max(
-        this.suspicionModifier[0],
-        this.suspicionModifier[1]
-      );
+      const [first, second] = this.suspicionModifier;
+      const min = Math.min(first, second);
+      const max = Math.max(first, second);
+
       return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
