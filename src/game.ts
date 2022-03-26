@@ -12,6 +12,7 @@ import Orientation from './orientation';
 import Deck from './deck';
 import CardEntry from './card-entry';
 import Investigator from './investigator';
+import Opponent from './opponent';
 
 const cardBackName = 'card-back';
 
@@ -31,6 +32,8 @@ class Scene extends Phaser.Scene {
   private keySpace: Phaser.Input.Keyboard.Key;
 
   private investigator: Investigator;
+
+  private opponent: Opponent;
 
   private intelText: Phaser.GameObjects.Text;
 
@@ -84,7 +87,8 @@ class Scene extends Phaser.Scene {
       this.discardPile = this.add.image(x, y, cardBackName);
       this.discardPile.setScale(CARD_SCALE);
 
-      this.opponentDeck = this.createOpponentDeck();
+      this.opponent = new Opponent(this.createOpponentDeck());
+      this.opponentDeck = this.opponent.getDrawPile();
       this.opponentDeck.setScale(CARD_SCALE);
       Scene.deal(this.opponentDeck.getCards());
     });
@@ -151,12 +155,10 @@ class Scene extends Phaser.Scene {
   }
 
   private createOpponentDeck() {
-    const entries = this.compendium.getOpponentCards().map((card) => {
+    return this.compendium.getOpponentCards().map((card) => {
       card.addSubscriber(this.investigator);
       return new CardEntry(card, 1);
     });
-
-    return new Deck(entries);
   }
 
   private getIntelligenceText() {

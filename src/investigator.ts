@@ -7,11 +7,12 @@ import CardEntry from './card-entry';
 import Deck from './deck';
 import Observer from './observer';
 import Orientation from './orientation';
+import Player from './player';
 
 const STARTING_SUSPICION_SCORE = 0;
 const STARTING_INTELLIGENCE_SCORE = 0;
 
-export default class Investigator implements Observer {
+export default class Investigator implements Player, Observer {
   private suspicion;
 
   private intelligence;
