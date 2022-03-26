@@ -11,7 +11,7 @@ import cardBackImage from './images/card-back.png';
 import Orientation from './orientation';
 import Deck from './deck';
 import CardEntry from './card-entry';
-import Player from './player';
+import Investigator from './investigator';
 
 const cardBackName = 'card-back';
 
@@ -30,7 +30,7 @@ class Scene extends Phaser.Scene {
 
   private keySpace: Phaser.Input.Keyboard.Key;
 
-  private player: Player;
+  private investigator: Investigator;
 
   private intelText: Phaser.GameObjects.Text;
 
@@ -38,7 +38,7 @@ class Scene extends Phaser.Scene {
 
   private compendium: Compendium;
 
-  private playerDeck: Deck;
+  private investigatorDeck: Deck;
 
   private discardPile: Phaser.GameObjects.Image;
 
@@ -72,9 +72,12 @@ class Scene extends Phaser.Scene {
     this.renderScore();
 
     this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-      this.player = new Player(dimensions, this.createPlayerDeck());
-      this.playerDeck = this.player.getDrawPile();
-      this.playerDeck.setScale(CARD_SCALE);
+      this.investigator = new Investigator(
+        dimensions,
+        this.createInvestigatorDeck()
+      );
+      this.investigatorDeck = this.investigator.getDrawPile();
+      this.investigatorDeck.setScale(CARD_SCALE);
 
       const x = CARD_WIDTH * CARD_SCALE * 8;
       const y = canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2;
@@ -94,7 +97,7 @@ class Scene extends Phaser.Scene {
     this.suspicionText.setText(this.getSuspicionText());
 
     this.discardPile?.setVisible(
-      this.player.getDiscardPile().getCards().length > 0
+      this.investigator.getDiscardPile().getCards().length > 0
     );
 
     if (Phaser.Input.Keyboard.JustDown(this.keySpace)) {
@@ -103,17 +106,18 @@ class Scene extends Phaser.Scene {
 
     if (Phaser.Input.Keyboard.JustDown(this.keyD)) this.draw();
 
-    if (Phaser.Input.Keyboard.JustDown(this.keyS)) this.playerDeck.shuffle();
+    if (Phaser.Input.Keyboard.JustDown(this.keyS))
+      this.investigatorDeck.shuffle();
 
     if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
-      this.player.reset();
+      this.investigator.reset();
       Scene.xDraw = (CARD_WIDTH * CARD_SCALE) / 2;
     }
   }
 
   private draw() {
     const padding = 3;
-    const cards = this.playerDeck.draw();
+    const cards = this.investigatorDeck.draw();
 
     cards.forEach((card) => {
       Scene.xDraw += CARD_WIDTH * CARD_SCALE + padding;
@@ -123,7 +127,7 @@ class Scene extends Phaser.Scene {
         canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2
       );
       card.draw();
-      this.player.addToHand(card);
+      this.investigator.addToHand(card);
     });
   }
 
@@ -140,15 +144,15 @@ class Scene extends Phaser.Scene {
     this.suspicionText.setPadding(padding);
   }
 
-  private createPlayerDeck() {
+  private createInvestigatorDeck() {
     return this.compendium
-      .getPlayerCards()
+      .getInvestigatorCards()
       .map((card) => new CardEntry(card, 3));
   }
 
   private createOpponentDeck() {
     const entries = this.compendium.getOpponentCards().map((card) => {
-      card.addSubscriber(this.player);
+      card.addSubscriber(this.investigator);
       return new CardEntry(card, 1);
     });
 
@@ -156,11 +160,11 @@ class Scene extends Phaser.Scene {
   }
 
   private getIntelligenceText() {
-    return `Intel: ${this.player?.getIntelligence() ?? 0}`;
+    return `Intel: ${this.investigator?.getIntelligence() ?? 0}`;
   }
 
   private getSuspicionText() {
-    return `Suspicion: ${this.player?.getSuspicion() ?? 0}`;
+    return `Suspicion: ${this.investigator?.getSuspicion() ?? 0}`;
   }
 }
 

@@ -7,7 +7,7 @@ import Observer from './observer';
 import Orientation from './orientation';
 import Parser from './parser';
 
-export default class PlayerCard
+export default class InvestigatorCard
   extends Phaser.GameObjects.Container
   implements Card
 {
@@ -102,7 +102,7 @@ export default class PlayerCard
     const xChild = CARD_WIDTH / 2;
     const yChild = CARD_HEIGHT / 4;
     const padding = 10;
-    const frame = scene.add.sprite(0, 0, 'player-frame');
+    const frame = scene.add.sprite(0, 0, 'investigator-frame');
 
     const name = scene.add.text(-xChild + padding, 0, title);
     name.setColor('black');
@@ -179,7 +179,7 @@ export default class PlayerCard
   }
 
   clone() {
-    const clone = new PlayerCard(
+    const clone = new InvestigatorCard(
       this.scene,
       this.title,
       this.effect,

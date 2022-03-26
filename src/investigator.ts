@@ -11,7 +11,7 @@ import Orientation from './orientation';
 const STARTING_SUSPICION_SCORE = 0;
 const STARTING_INTELLIGENCE_SCORE = 0;
 
-export default class Player implements Observer {
+export default class Investigator implements Observer {
   private suspicion;
 
   private intelligence;
@@ -93,7 +93,7 @@ export default class Player implements Observer {
 
   // eslint-disable-next-line class-methods-use-this
   isEqual(obj: any): boolean {
-    if (obj instanceof Player) return true;
+    if (obj instanceof Investigator) return true;
 
     return false;
   }
