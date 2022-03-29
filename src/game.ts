@@ -6,15 +6,22 @@ import Card, {
   HEIGHT as CARD_HEIGHT,
   SCALE as CARD_SCALE,
 } from './card';
-
-import cardBackImage from './images/card-back.png';
 import Orientation from './orientation';
 import Deck from './deck';
 import CardEntry from './card-entry';
 import Investigator from './investigator';
 import Opponent from './opponent';
+import TurnTracker from './turn-tracker';
+
+import cardBackImage from './images/card-back.png';
+import investigatorTurnTokenImage from './images/turn-token-investigator.png';
+import opponentTurnTokenImage from './images/turn-token-opponent.png';
+import placeholderTurnTokenImage from './images/turn-token-placeholder.png';
 
 const cardBackName = 'card-back';
+const investigatorTurnTokenName = 'investigator-turn-token';
+const opponentTurnTokenName = 'opponent-turn-token';
+const placeholderTurnTokenName = 'placeholder-turn-token';
 
 const canvasWidth = CARD_WIDTH * CARD_SCALE * 10;
 const canvasHeight = CARD_HEIGHT * CARD_SCALE * 3;
@@ -47,6 +54,8 @@ class Scene extends Phaser.Scene {
 
   private opponentDeck: Deck;
 
+  private turnTracker: TurnTracker;
+
   private static deal(cards: Card[], y = (CARD_HEIGHT * CARD_SCALE) / 2) {
     const padding = 3;
     let x = (CARD_WIDTH * CARD_SCALE) / 2;
@@ -61,6 +70,9 @@ class Scene extends Phaser.Scene {
 
   preload() {
     this.load.image(cardBackName, cardBackImage);
+    this.load.image(investigatorTurnTokenName, investigatorTurnTokenImage);
+    this.load.image(opponentTurnTokenName, opponentTurnTokenImage);
+    this.load.image(placeholderTurnTokenName, placeholderTurnTokenImage);
   }
 
   create() {
@@ -73,6 +85,7 @@ class Scene extends Phaser.Scene {
 
     this.compendium = new Compendium(this);
     this.renderScore();
+    this.renderTurnTracker();
 
     this.load.once(Phaser.Loader.Events.COMPLETE, () => {
       this.investigator = new Investigator(
@@ -146,6 +159,20 @@ class Scene extends Phaser.Scene {
 
     this.suspicionText = this.add.text(0, y, this.getSuspicionText());
     this.suspicionText.setPadding(padding);
+  }
+
+  private renderTurnTracker() {
+    this.turnTracker = new TurnTracker(this, [
+      { player: this.investigator, icon: investigatorTurnTokenName },
+      { player: this.opponent, icon: opponentTurnTokenName },
+    ]);
+
+    const scale = 0.8;
+    const x = canvasWidth - this.turnTracker.width / 2;
+    const y = canvasHeight / 2;
+
+    this.turnTracker.setScale(scale);
+    this.turnTracker.setPosition(x, y);
   }
 
   private createInvestigatorDeck() {
