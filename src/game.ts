@@ -23,7 +23,7 @@ const investigatorTurnTokenName = 'investigator-turn-token';
 const opponentTurnTokenName = 'opponent-turn-token';
 const placeholderTurnTokenName = 'placeholder-turn-token';
 
-const canvasWidth = CARD_WIDTH * CARD_SCALE * 10;
+const canvasWidth = CARD_WIDTH * CARD_SCALE * 9;
 const canvasHeight = CARD_HEIGHT * CARD_SCALE * 3;
 const dimensions = { width: canvasWidth, height: canvasHeight };
 
@@ -84,8 +84,8 @@ class Scene extends Phaser.Scene {
     );
 
     this.compendium = new Compendium(this);
-    this.renderScore();
-    this.renderTurnTracker();
+    this.renderScore(0, canvasHeight / 2);
+    this.renderTurnTracker(0, canvasHeight / 2);
 
     this.load.once(Phaser.Loader.Events.COMPLETE, () => {
       this.investigator = new Investigator(
@@ -148,31 +148,44 @@ class Scene extends Phaser.Scene {
     });
   }
 
-  private renderScore() {
+  private renderScore(originX: number, originY: number) {
     const padding = 10;
-    let y = CARD_HEIGHT * CARD_SCALE * 1.5;
 
-    this.intelText = this.add.text(0, y, this.getIntelligenceText());
+    this.intelText = this.add.text(0, 0, this.getIntelligenceText());
     this.intelText.setPadding(padding);
 
-    y += this.intelText.height - padding * 2;
-
-    this.suspicionText = this.add.text(0, y, this.getSuspicionText());
+    this.suspicionText = this.add.text(
+      0,
+      this.intelText.height - padding,
+      this.getSuspicionText()
+    );
     this.suspicionText.setPadding(padding);
+
+    const container = this.add.container(originX, originY, [
+      this.intelText,
+      this.suspicionText,
+    ]);
+    container.setPosition(
+      originX,
+      originY - (this.intelText.height + this.suspicionText.height)
+    );
   }
 
-  private renderTurnTracker() {
+  private renderTurnTracker(originX: number, originY: number) {
     this.turnTracker = new TurnTracker(this, [
       { player: this.investigator, icon: investigatorTurnTokenName },
       { player: this.opponent, icon: opponentTurnTokenName },
     ]);
 
-    const scale = 0.8;
-    const x = canvasWidth - this.turnTracker.width / 2;
-    const y = canvasHeight / 2;
+    const padding = 5;
+    const scale = 0.5;
+    const x = padding + originX;
 
     this.turnTracker.setScale(scale);
-    this.turnTracker.setPosition(x, y);
+    this.turnTracker.setPosition(
+      x + this.turnTracker.displayWidth / 2,
+      originY + this.turnTracker.displayHeight / 2
+    );
   }
 
   private createInvestigatorDeck() {
