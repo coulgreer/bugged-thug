@@ -4,24 +4,13 @@ import InvestigatorCard from './investigator-card';
 import OpponentCard from './opponent-card';
 
 import investigatorCardFrame from './images/investigator-frame.png';
-import investigatorCard1Image from './images/prod.png';
-import investigatorCard2Image from './images/small-talk.png';
+import prod from './images/prod.png';
+import smallTalk from './images/small-talk.png';
 
 import opponentCardFrame from './images/opponent-frame.png';
-import opponentCard1Image from './images/chit-chat.png';
-import opponentCard2Image from './images/suspect.png';
-import opponentCard3Image from './images/think.png';
-
-// Investigator Cards
-const investigatorFrameName = 'investigator-frame';
-const investigatorCard1Name = 'prod';
-const investigatorCard2Name = 'small-talk';
-
-// Opponent Cards
-const opponentFrameName = 'opponent-frame';
-const opponentCard1Name = 'chit-chat';
-const opponentCard2Name = 'suspect';
-const opponentCard3Name = 'think';
+import chitChat from './images/chit-chat.png';
+import suspect from './images/suspect.png';
+import think from './images/think.png';
 
 export default class Compendium {
   private scene;
@@ -35,13 +24,13 @@ export default class Compendium {
     this.investigatorCards = [];
     this.opponentCards = [];
 
-    scene.load.image(investigatorFrameName, investigatorCardFrame);
-    scene.load.image(investigatorCard1Name, investigatorCard1Image);
-    scene.load.image(investigatorCard2Name, investigatorCard2Image);
-    scene.load.image(opponentFrameName, opponentCardFrame);
-    scene.load.image(opponentCard1Name, opponentCard1Image);
-    scene.load.image(opponentCard2Name, opponentCard2Image);
-    scene.load.image(opponentCard3Name, opponentCard3Image);
+    scene.load.image('investigator-frame', investigatorCardFrame);
+    scene.load.image('prod', prod);
+    scene.load.image('small-talk', smallTalk);
+    scene.load.image('opponent-frame', opponentCardFrame);
+    scene.load.image('chit-chat', chitChat);
+    scene.load.image('suspect', suspect);
+    scene.load.image('think', think);
 
     scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
       this.investigatorCards = [
@@ -49,13 +38,13 @@ export default class Compendium {
           this.scene,
           'Prod',
           '<Gain 0-2 intel>. If 0 intel is gained then suspicion is increased by 1-2.',
-          investigatorCard1Name
+          'prod'
         ),
         new InvestigatorCard(
           this.scene,
           'Small Talk',
           '<Gain 0-1 intel>.',
-          investigatorCard2Name
+          'small-talk'
         ),
       ];
 
@@ -64,20 +53,15 @@ export default class Compendium {
           this.scene,
           'Chit-Chat',
           '<Gain 0-2 intel>.',
-          opponentCard1Name
+          'chit-chat'
         ),
         new OpponentCard(
           this.scene,
           'Suspect',
           '<Gain 1-2 suspicion>.',
-          opponentCard2Name
+          'suspect'
         ),
-        new OpponentCard(
-          this.scene,
-          'Think',
-          '<Gain 0-1 suspicion>.',
-          opponentCard3Name
-        ),
+        new OpponentCard(this.scene, 'Think', '<Gain 0-1 suspicion>.', 'think'),
       ];
     });
 

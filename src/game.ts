@@ -13,15 +13,10 @@ import Investigator from './investigator';
 import Opponent from './opponent';
 import TurnTracker from './turn-tracker';
 
-import cardBackImage from './images/card-back.png';
-import investigatorTurnTokenImage from './images/turn-token-investigator.png';
-import opponentTurnTokenImage from './images/turn-token-opponent.png';
-import placeholderTurnTokenImage from './images/turn-token-placeholder.png';
-
-const cardBackName = 'card-back';
-const investigatorTurnTokenName = 'investigator-turn-token';
-const opponentTurnTokenName = 'opponent-turn-token';
-const placeholderTurnTokenName = 'placeholder-turn-token';
+import cardBack from './images/card-back.png';
+import investigatorTurnToken from './images/turn-token-investigator.png';
+import opponentTurnToken from './images/turn-token-opponent.png';
+import placeholderTurnToken from './images/turn-token-placeholder.png';
 
 const canvasWidth = CARD_WIDTH * CARD_SCALE * 9;
 const canvasHeight = CARD_HEIGHT * CARD_SCALE * 3;
@@ -69,10 +64,10 @@ class Scene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image(cardBackName, cardBackImage);
-    this.load.image(investigatorTurnTokenName, investigatorTurnTokenImage);
-    this.load.image(opponentTurnTokenName, opponentTurnTokenImage);
-    this.load.image(placeholderTurnTokenName, placeholderTurnTokenImage);
+    this.load.image('card-back', cardBack);
+    this.load.image('investigator-turn-token', investigatorTurnToken);
+    this.load.image('opponent-turn-token', opponentTurnToken);
+    this.load.image('placeholder-turn-token', placeholderTurnToken);
   }
 
   create() {
@@ -97,7 +92,7 @@ class Scene extends Phaser.Scene {
 
       const x = CARD_WIDTH * CARD_SCALE * 8;
       const y = canvasHeight - (CARD_HEIGHT * CARD_SCALE) / 2;
-      this.discardPile = this.add.image(x, y, cardBackName);
+      this.discardPile = this.add.image(x, y, 'card-back');
       this.discardPile.setScale(CARD_SCALE);
 
       this.opponent = new Opponent(this.createOpponentDeck());
@@ -173,8 +168,8 @@ class Scene extends Phaser.Scene {
 
   private renderTurnTracker(originX: number, originY: number) {
     this.turnTracker = new TurnTracker(this, [
-      { player: this.investigator, icon: investigatorTurnTokenName },
-      { player: this.opponent, icon: opponentTurnTokenName },
+      { player: this.investigator, icon: 'investigator-turn-token' },
+      { player: this.opponent, icon: 'opponent-turn-token' },
     ]);
 
     const padding = 5;
@@ -186,6 +181,14 @@ class Scene extends Phaser.Scene {
       x + this.turnTracker.displayWidth / 2,
       originY + this.turnTracker.displayHeight / 2
     );
+  }
+
+  renderEndTurnButton(originX: number, originY: number) {
+    const button = this.add.sprite(originX, originY, 'end-turn-button');
+    const x = originX - button.width / 2;
+    const y = originY - button.height / 2;
+
+    button.setPosition(x, y);
   }
 
   private createInvestigatorDeck() {
