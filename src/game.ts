@@ -17,6 +17,7 @@ import cardBack from './images/card-back.png';
 import investigatorTurnToken from './images/turn-token-investigator.png';
 import opponentTurnToken from './images/turn-token-opponent.png';
 import placeholderTurnToken from './images/turn-token-placeholder.png';
+import endTurnButton from './images/end-turn-button.png';
 
 const canvasWidth = CARD_WIDTH * CARD_SCALE * 9;
 const canvasHeight = CARD_HEIGHT * CARD_SCALE * 3;
@@ -68,6 +69,7 @@ class Scene extends Phaser.Scene {
     this.load.image('investigator-turn-token', investigatorTurnToken);
     this.load.image('opponent-turn-token', opponentTurnToken);
     this.load.image('placeholder-turn-token', placeholderTurnToken);
+    this.load.image('end-turn-button', endTurnButton);
   }
 
   create() {
@@ -80,7 +82,6 @@ class Scene extends Phaser.Scene {
 
     this.compendium = new Compendium(this);
     this.renderScore(0, canvasHeight / 2);
-    this.renderTurnTracker(0, canvasHeight / 2);
 
     this.load.once(Phaser.Loader.Events.COMPLETE, () => {
       this.investigator = new Investigator(
@@ -99,6 +100,9 @@ class Scene extends Phaser.Scene {
       this.opponentDeck = this.opponent.getDrawPile();
       this.opponentDeck.setScale(CARD_SCALE);
       Scene.deal(this.opponentDeck.getCards());
+
+      this.renderTurnTracker(0, canvasHeight / 2);
+      this.renderEndTurnButton(canvasWidth, canvasHeight / 2);
     });
 
     this.load.start();
@@ -156,13 +160,10 @@ class Scene extends Phaser.Scene {
     );
     this.suspicionText.setPadding(padding);
 
-    const container = this.add.container(originX, originY, [
-      this.intelText,
-      this.suspicionText,
-    ]);
-    container.setPosition(
+    this.add.container(
       originX,
-      originY - (this.intelText.height + this.suspicionText.height)
+      originY - (this.intelText.height + this.suspicionText.height),
+      [this.intelText, this.suspicionText]
     );
   }
 
@@ -173,10 +174,9 @@ class Scene extends Phaser.Scene {
     ]);
 
     const padding = 5;
-    const scale = 0.5;
     const x = padding + originX;
 
-    this.turnTracker.setScale(scale);
+    this.turnTracker.setScale(0.5);
     this.turnTracker.setPosition(
       x + this.turnTracker.displayWidth / 2,
       originY + this.turnTracker.displayHeight / 2
@@ -184,11 +184,19 @@ class Scene extends Phaser.Scene {
   }
 
   renderEndTurnButton(originX: number, originY: number) {
+    const padding = 10;
     const button = this.add.sprite(originX, originY, 'end-turn-button');
-    const x = originX - button.width / 2;
-    const y = originY - button.height / 2;
 
-    button.setPosition(x, y);
+    button.setScale(0.5);
+    button.setInteractive();
+    button.on('pointerdown', () => {
+      if (this.turnTracker.getCurrentPlayer().isEqual(this.investigator))
+        this.turnTracker.endTurn();
+    });
+
+    const x = originX - button.displayWidth / 2 - padding;
+
+    button.setPosition(x, originY);
   }
 
   private createInvestigatorDeck() {

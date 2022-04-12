@@ -22,6 +22,13 @@ export default class Opponent implements Player {
   }
 
   // eslint-disable-next-line class-methods-use-this
+  isEqual(obj: any): boolean {
+    if (obj instanceof Opponent) return true;
+
+    return false;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
   getHandPile(): Card[] {
     return [];
   }

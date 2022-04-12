@@ -23,4 +23,17 @@ export default class TurnTracker extends GameObjects.Sprite {
     this.currentIndex = TurnTracker.STARTING_INDEX;
     this.setTexture(this.players[this.currentIndex].icon);
   }
+
+  getCurrentPlayer() {
+    return this.players[this.currentIndex].player;
+  }
+
+  endTurn() {
+    this.currentIndex =
+      this.currentIndex === this.players.length - 1
+        ? TurnTracker.STARTING_INDEX
+        : this.currentIndex + 1;
+
+    this.setTexture(this.players[this.currentIndex].icon);
+  }
 }
