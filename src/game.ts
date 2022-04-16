@@ -183,15 +183,18 @@ class Scene extends Phaser.Scene {
     );
   }
 
-  renderEndTurnButton(originX: number, originY: number) {
+  private renderEndTurnButton(originX: number, originY: number) {
     const padding = 10;
     const button = this.add.sprite(originX, originY, 'end-turn-button');
 
     button.setScale(0.5);
     button.setInteractive();
     button.on('pointerdown', () => {
-      if (this.turnTracker.getCurrentPlayer().isEqual(this.investigator))
+      if (this.turnTracker.getCurrentPlayer().isEqual(this.investigator)) {
         this.turnTracker.endTurn();
+        setTimeout(() => this.opponent.playCard(), 1500);
+        setTimeout(() => this.turnTracker.endTurn(), 1500);
+      }
     });
 
     const x = originX - button.displayWidth / 2 - padding;

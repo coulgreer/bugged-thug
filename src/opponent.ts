@@ -8,9 +8,9 @@ import Deck from './deck';
 import Player from './player';
 
 export default class Opponent implements Player {
-  private drawPile: Deck;
+  private drawPile;
 
-  private discardPile: Deck;
+  private discardPile;
 
   constructor(master: CardEntry[]) {
     this.discardPile = new Deck([], 0, 0);
@@ -39,5 +39,11 @@ export default class Opponent implements Player {
 
   getDiscardPile(): Deck {
     return this.discardPile;
+  }
+
+  playCard() {
+    this.drawPile.shuffle();
+    const [drawnCard] = this.drawPile.draw();
+    drawnCard.play();
   }
 }

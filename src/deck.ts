@@ -24,6 +24,7 @@ export default class Deck {
     });
   }
 
+  // TODO (Coul Greer): Clean up these private utility methods
   private addCardToPile(
     card: Card,
     position: Orientation.TOP | Orientation.BOTTOM

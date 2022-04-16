@@ -133,6 +133,7 @@ export default class OpponentCard
 
   play() {
     this.displayManager.setShown(false);
+    this.notify();
   }
 
   draw() {
