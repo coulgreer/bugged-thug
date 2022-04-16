@@ -7,68 +7,21 @@ export default class Deck {
 
   private yPos: number;
 
-  private cardPile: Card[];
+  private pile: Card[];
 
   constructor(cardEntries: CardEntry[], xPos: number = 0, yPos: number = 0) {
-    this.cardPile = [];
+    this.pile = [];
     this.xPos = xPos;
     this.yPos = yPos;
 
     cardEntries.forEach((entry) => {
-      entry.getCards().forEach((card) => this.cardPile.push(card));
+      entry.getCards().forEach((card) => this.pile.push(card));
     });
 
-    this.cardPile.forEach((card, i) => {
-      card.setDepth(this.cardPile.length - i);
+    this.pile.forEach((card, i) => {
+      card.setDepth(this.pile.length - i);
       card.setPosition(xPos, yPos);
     });
-  }
-
-  // TODO (Coul Greer): Clean up these private utility methods
-  private addCardToPile(
-    card: Card,
-    position: Orientation.TOP | Orientation.BOTTOM
-  ) {
-    card.discard();
-
-    switch (position) {
-      case Orientation.TOP: {
-        this.cardPile = [card, ...this.cardPile];
-        break;
-      }
-      case Orientation.BOTTOM: {
-        this.cardPile = [...this.cardPile, card];
-        break;
-      }
-      default:
-        break;
-    }
-  }
-
-  private normalizeDepth(
-    card: Card,
-    position: Orientation.TOP | Orientation.BOTTOM
-  ) {
-    switch (position) {
-      case Orientation.TOP: {
-        this.normalize();
-        card.setDepth(this.cardPile.length + 1);
-        card.setPosition(this.xPos, this.yPos);
-        break;
-      }
-      case Orientation.BOTTOM: {
-        this.normalize(this.cardPile.length + 1);
-        card.setDepth(0);
-        card.setPosition(this.xPos, this.yPos);
-        break;
-      }
-      default:
-        break;
-    }
-  }
-
-  private normalize(startingIndex = this.cardPile.length) {
-    this.cardPile.forEach((card, i) => card.setDepth(startingIndex - i));
   }
 
   combine(
@@ -83,19 +36,20 @@ export default class Deck {
       this.combine(c.getCards(), position);
       c.clear();
     } else {
-      c.setInteractive();
       this.addCardToPile(c, position);
-      this.normalizeDepth(c, position);
+      this.updateCardDepths();
+      c.setInteractive();
+      c.setPosition(this.xPos, this.yPos);
     }
   }
 
   draw(amount = 1) {
     const drawnCards: Card[] = [];
 
-    if (this.cardPile.length < 1) return drawnCards;
+    if (this.pile.length < 1) return drawnCards;
 
     for (let x = 0; x < amount; x += 1) {
-      const card = this.cardPile.shift();
+      const card = this.pile.shift();
       card.draw();
       drawnCards.push(card);
     }
@@ -104,25 +58,46 @@ export default class Deck {
   }
 
   shuffle() {
-    for (let x = this.cardPile.length - 1; x > 0; x -= 1) {
+    for (let x = this.pile.length - 1; x > 0; x -= 1) {
       const y = Math.floor(Math.random() * (x + 1));
-      [this.cardPile[x], this.cardPile[y]] = [
-        this.cardPile[y],
-        this.cardPile[x],
-      ];
+      [this.pile[x], this.pile[y]] = [this.pile[y], this.pile[x]];
     }
-    this.normalize();
+    this.updateCardDepths();
   }
 
   getCards() {
-    return Array.from(this.cardPile);
+    return Array.from(this.pile);
   }
 
   clear() {
-    this.cardPile = [];
+    this.pile = [];
   }
 
   setScale(value: number) {
-    this.cardPile.forEach((card) => card.setScale(value));
+    this.pile.forEach((card) => card.setScale(value));
+  }
+
+  private addCardToPile(
+    card: Card,
+    position: Orientation.TOP | Orientation.BOTTOM
+  ) {
+    card.discard();
+
+    switch (position) {
+      case Orientation.TOP: {
+        this.pile = [card, ...this.pile];
+        break;
+      }
+      case Orientation.BOTTOM: {
+        this.pile = [...this.pile, card];
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  private updateCardDepths() {
+    this.pile.forEach((card, i) => card.setDepth(this.pile.length - i));
   }
 }
