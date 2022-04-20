@@ -192,8 +192,10 @@ class Scene extends Phaser.Scene {
     button.on('pointerdown', () => {
       if (this.turnTracker.getCurrentPlayer().isEqual(this.investigator)) {
         this.turnTracker.endTurn();
-        setTimeout(() => this.opponent.playCard(), 1500);
-        setTimeout(() => this.turnTracker.endTurn(), 1500);
+        setTimeout(() => {
+          this.opponent.play();
+          this.turnTracker.endTurn();
+        }, 1500);
       }
     });
 

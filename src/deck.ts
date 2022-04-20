@@ -38,7 +38,6 @@ export default class Deck {
     } else {
       this.addCardToPile(c, position);
       this.updateCardDepths();
-      c.setInteractive();
       c.setPosition(this.xPos, this.yPos);
     }
   }
